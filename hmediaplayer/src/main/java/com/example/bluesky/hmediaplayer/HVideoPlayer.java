@@ -34,10 +34,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by Nathen on 16/7/30.
+ * Created by blue_sky on 2017/12/18.
  */
-public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
 
+public  abstract class HVideoPlayer extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener{
     public static final String TAG = "JiaoZiVideoPlayer";
     public static final int THRESHOLD = 80;
     public static final int FULL_SCREEN_NORMAL_DELAY = 300;
@@ -81,9 +81,9 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     try {
-                        if (//JZMediaManager.instance().mediaPlayer != null &&
-                                JZMediaManager.isPlaying()) {
-                            JZMediaManager.pause();
+                        if (//HMediaManager.instance().mediaPlayer != null &&
+                                HMediaManager.isPlaying()) {
+                            HMediaManager.pause();
                         }
                     } catch (IllegalStateException e) {
                         e.printStackTrace();
@@ -95,7 +95,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
             }
         }
     };
-    protected static JZUserAction JZ_USER_EVENT;
+    protected static HUserAction JZ_USER_EVENT;
     protected static Timer UPDATE_PROGRESS_TIMER;
     public int currentState = -1;
     public int currentScreen = -1;
@@ -128,14 +128,14 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     protected int mGestureDownVolume;
     protected float mGestureDownBrightness;
     protected long mSeekTimePosition;
-    boolean tmp_test_back = false;
+    public boolean tmp_test_back = false;
 
-    public JZVideoPlayer(Context context) {
+    public HVideoPlayer(Context context) {
         super(context);
         init(context);
     }
 
-    public JZVideoPlayer(Context context, AttributeSet attrs) {
+    public HVideoPlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
@@ -143,9 +143,9 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     public static void releaseAllVideos() {
         if ((System.currentTimeMillis() - CLICK_QUIT_FULLSCREEN_TIME) > FULL_SCREEN_NORMAL_DELAY) {
             Log.d(TAG, "releaseAllVideos");
-            JZVideoPlayerManager.completeAll();
-            JZMediaManager.instance().positionInList = -1;
-            JZMediaManager.instance().releaseMediaPlayer();
+            HVideoPlayerManager.completeAll();
+            HMediaManager.instance().positionInList = -1;
+            HMediaManager.instance().releaseMediaPlayer();
         }
     }
 
@@ -159,23 +159,23 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     public static void startFullscreen(Context context, Class _class, Object[] dataSourceObjects, int defaultUrlMapIndex, Object... objects) {
         hideSupportActionBar(context);
-        JZUtils.setRequestedOrientation(context, FULLSCREEN_ORIENTATION);
-        ViewGroup vp = (JZUtils.scanForActivity(context))//.getWindow().getDecorView();
+        HUtils.setRequestedOrientation(context, FULLSCREEN_ORIENTATION);
+        ViewGroup vp = (HUtils.scanForActivity(context))//.getWindow().getDecorView();
                 .findViewById(Window.ID_ANDROID_CONTENT);
         View old = vp.findViewById(R.id.jz_fullscreen_id);
         if (old != null) {
             vp.removeView(old);
         }
         try {
-            Constructor<JZVideoPlayer> constructor = _class.getConstructor(Context.class);
-            final JZVideoPlayer jzVideoPlayer = constructor.newInstance(context);
+            Constructor<HVideoPlayer> constructor = _class.getConstructor(Context.class);
+            final HVideoPlayer jzVideoPlayer = constructor.newInstance(context);
             jzVideoPlayer.setId(R.id.jz_fullscreen_id);
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             vp.addView(jzVideoPlayer, lp);
 //            final Animation ra = AnimationUtils.loadAnimation(context, R.anim.start_fullscreen);
 //            jzVideoPlayer.setAnimation(ra);
-            jzVideoPlayer.setUp(dataSourceObjects, defaultUrlMapIndex, JZVideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN, objects);
+            jzVideoPlayer.setUp(dataSourceObjects, defaultUrlMapIndex, HVideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN, objects);
             CLICK_QUIT_FULLSCREEN_TIME = System.currentTimeMillis();
             jzVideoPlayer.startButton.performClick();
         } catch (InstantiationException e) {
@@ -190,21 +190,21 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         if ((System.currentTimeMillis() - CLICK_QUIT_FULLSCREEN_TIME) < FULL_SCREEN_NORMAL_DELAY)
             return false;
 
-        if (JZVideoPlayerManager.getSecondFloor() != null) {
+        if (HVideoPlayerManager.getSecondFloor() != null) {
             CLICK_QUIT_FULLSCREEN_TIME = System.currentTimeMillis();
-            if (JZUtils.dataSourceObjectsContainsUri(JZVideoPlayerManager.getFirstFloor().dataSourceObjects, JZMediaManager.getCurrentDataSource())) {
-                JZVideoPlayer jzVideoPlayer = JZVideoPlayerManager.getSecondFloor();
-                jzVideoPlayer.onEvent(jzVideoPlayer.currentScreen == JZVideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN ?
-                        JZUserAction.ON_QUIT_FULLSCREEN :
-                        JZUserAction.ON_QUIT_TINYSCREEN);
-                JZVideoPlayerManager.getFirstFloor().playOnThisJzvd();
+            if (HUtils.dataSourceObjectsContainsUri(HVideoPlayerManager.getFirstFloor().dataSourceObjects, HMediaManager.getCurrentDataSource())) {
+                HVideoPlayer jzVideoPlayer = HVideoPlayerManager.getSecondFloor();
+                jzVideoPlayer.onEvent(jzVideoPlayer.currentScreen == HVideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN ?
+                        HUserAction.ON_QUIT_FULLSCREEN :
+                        HUserAction.ON_QUIT_TINYSCREEN);
+                HVideoPlayerManager.getFirstFloor().playOnThisJzvd();
             } else {
                 quitFullscreenOrTinyWindow();
             }
             return true;
-        } else if (JZVideoPlayerManager.getFirstFloor() != null &&
-                (JZVideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN ||
-                        JZVideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_TINY)) {//以前我总想把这两个判断写到一起，这分明是两个独立是逻辑
+        } else if (HVideoPlayerManager.getFirstFloor() != null &&
+                (HVideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN ||
+                        HVideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_TINY)) {//以前我总想把这两个判断写到一起，这分明是两个独立是逻辑
             CLICK_QUIT_FULLSCREEN_TIME = System.currentTimeMillis();
             quitFullscreenOrTinyWindow();
             return true;
@@ -214,90 +214,90 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     public static void quitFullscreenOrTinyWindow() {
         //直接退出全屏和小窗
-        JZVideoPlayerManager.getFirstFloor().clearFloatScreen();
-        JZMediaManager.instance().releaseMediaPlayer();
-        JZVideoPlayerManager.completeAll();
+        HVideoPlayerManager.getFirstFloor().clearFloatScreen();
+        HMediaManager.instance().releaseMediaPlayer();
+        HVideoPlayerManager.completeAll();
     }
 
     @SuppressLint("RestrictedApi")
     public static void showSupportActionBar(Context context) {
-        if (ACTION_BAR_EXIST && JZUtils.getAppCompActivity(context) != null) {
-            ActionBar ab = JZUtils.getAppCompActivity(context).getSupportActionBar();
+        if (ACTION_BAR_EXIST && HUtils.getAppCompActivity(context) != null) {
+            ActionBar ab = HUtils.getAppCompActivity(context).getSupportActionBar();
             if (ab != null) {
                 ab.setShowHideAnimationEnabled(false);
                 ab.show();
             }
         }
         if (TOOL_BAR_EXIST) {
-            JZUtils.getWindow(context).clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            HUtils.getWindow(context).clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
     }
 
     @SuppressLint("RestrictedApi")
     public static void hideSupportActionBar(Context context) {
-        if (ACTION_BAR_EXIST && JZUtils.getAppCompActivity(context) != null) {
-            ActionBar ab = JZUtils.getAppCompActivity(context).getSupportActionBar();
+        if (ACTION_BAR_EXIST && HUtils.getAppCompActivity(context) != null) {
+            ActionBar ab = HUtils.getAppCompActivity(context).getSupportActionBar();
             if (ab != null) {
                 ab.setShowHideAnimationEnabled(false);
                 ab.hide();
             }
         }
         if (TOOL_BAR_EXIST) {
-            JZUtils.getWindow(context).setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            HUtils.getWindow(context).setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
     }
 
     public static void clearSavedProgress(Context context, String url) {
-        JZUtils.clearSavedProgress(context, url);
+        HUtils.clearSavedProgress(context, url);
     }
 
-    public static void setJzUserAction(JZUserAction jzUserEvent) {
+    public static void setHUserAction(HUserAction jzUserEvent) {
         JZ_USER_EVENT = jzUserEvent;
     }
 
     public static void goOnPlayOnResume() {
-        if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-            JZVideoPlayer jzvd = JZVideoPlayerManager.getCurrentJzvd();
-            if (jzvd.currentState == JZVideoPlayer.CURRENT_STATE_PAUSE) {
+        if (HVideoPlayerManager.getCurrentJzvd() != null) {
+            HVideoPlayer jzvd = HVideoPlayerManager.getCurrentJzvd();
+            if (jzvd.currentState == HVideoPlayer.CURRENT_STATE_PAUSE) {
                 jzvd.onStatePlaying();
-                JZMediaManager.start();
+                HMediaManager.start();
             }
         }
     }
 
     public static void goOnPlayOnPause() {
-        if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-            JZVideoPlayer jzvd = JZVideoPlayerManager.getCurrentJzvd();
-            if (jzvd.currentState == JZVideoPlayer.CURRENT_STATE_AUTO_COMPLETE ||
-                    jzvd.currentState == JZVideoPlayer.CURRENT_STATE_NORMAL) {
-//                JZVideoPlayer.releaseAllVideos();
+        if (HVideoPlayerManager.getCurrentJzvd() != null) {
+            HVideoPlayer jzvd = HVideoPlayerManager.getCurrentJzvd();
+            if (jzvd.currentState == HVideoPlayer.CURRENT_STATE_AUTO_COMPLETE ||
+                    jzvd.currentState == HVideoPlayer.CURRENT_STATE_NORMAL) {
+//                HVideoPlayer.releaseAllVideos();
             } else {
                 jzvd.onStatePause();
-                JZMediaManager.pause();
+                HMediaManager.pause();
             }
         }
     }
 
     public static void onScrollAutoTiny(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         int lastVisibleItem = firstVisibleItem + visibleItemCount;
-        int currentPlayPosition = JZMediaManager.instance().positionInList;
+        int currentPlayPosition = HMediaManager.instance().positionInList;
         if (currentPlayPosition >= 0) {
             if ((currentPlayPosition < firstVisibleItem || currentPlayPosition > (lastVisibleItem - 1))) {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null &&
-                        JZVideoPlayerManager.getCurrentJzvd().currentScreen != JZVideoPlayer.SCREEN_WINDOW_TINY) {
-                    if (JZVideoPlayerManager.getCurrentJzvd().currentState == JZVideoPlayer.CURRENT_STATE_PAUSE) {
-                        JZVideoPlayer.releaseAllVideos();
+                if (HVideoPlayerManager.getCurrentJzvd() != null &&
+                        HVideoPlayerManager.getCurrentJzvd().currentScreen != HVideoPlayer.SCREEN_WINDOW_TINY) {
+                    if (HVideoPlayerManager.getCurrentJzvd().currentState == HVideoPlayer.CURRENT_STATE_PAUSE) {
+                        HVideoPlayer.releaseAllVideos();
                     } else {
                         Log.e(TAG, "onScroll: out screen");
-                        JZVideoPlayerManager.getCurrentJzvd().startWindowTiny();
+                        HVideoPlayerManager.getCurrentJzvd().startWindowTiny();
                     }
                 }
             } else {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null &&
-                        JZVideoPlayerManager.getCurrentJzvd().currentScreen == JZVideoPlayer.SCREEN_WINDOW_TINY) {
+                if (HVideoPlayerManager.getCurrentJzvd() != null &&
+                        HVideoPlayerManager.getCurrentJzvd().currentScreen == HVideoPlayer.SCREEN_WINDOW_TINY) {
                     Log.e(TAG, "onScroll: into screen");
-                    JZVideoPlayer.backPress();
+                    HVideoPlayer.backPress();
                 }
             }
         }
@@ -305,29 +305,29 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     public static void onScrollReleaseAllVideos(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         int lastVisibleItem = firstVisibleItem + visibleItemCount;
-        int currentPlayPosition = JZMediaManager.instance().positionInList;
+        int currentPlayPosition = HMediaManager.instance().positionInList;
         if (currentPlayPosition >= 0) {
             if ((currentPlayPosition < firstVisibleItem || currentPlayPosition > (lastVisibleItem - 1))) {
-                JZVideoPlayer.releaseAllVideos();
+                HVideoPlayer.releaseAllVideos();
             }
         }
     }
 
     public static void onChildViewAttachedToWindow(View view, int jzvdId) {
-        if (JZVideoPlayerManager.getCurrentJzvd() != null && JZVideoPlayerManager.getCurrentJzvd().currentScreen == JZVideoPlayer.SCREEN_WINDOW_TINY) {
-            JZVideoPlayer videoPlayer = view.findViewById(jzvdId);
-            if (videoPlayer != null && JZUtils.getCurrentFromDataSource(videoPlayer.dataSourceObjects, videoPlayer.currentUrlMapIndex).equals(JZMediaManager.getCurrentDataSource())) {
-                JZVideoPlayer.backPress();
+        if (HVideoPlayerManager.getCurrentJzvd() != null && HVideoPlayerManager.getCurrentJzvd().currentScreen == HVideoPlayer.SCREEN_WINDOW_TINY) {
+            HVideoPlayer videoPlayer = view.findViewById(jzvdId);
+            if (videoPlayer != null && HUtils.getCurrentFromDataSource(videoPlayer.dataSourceObjects, videoPlayer.currentUrlMapIndex).equals(HMediaManager.getCurrentDataSource())) {
+                HVideoPlayer.backPress();
             }
         }
     }
 
     public static void onChildViewDetachedFromWindow(View view) {
-        if (JZVideoPlayerManager.getCurrentJzvd() != null && JZVideoPlayerManager.getCurrentJzvd().currentScreen != JZVideoPlayer.SCREEN_WINDOW_TINY) {
-            JZVideoPlayer videoPlayer = JZVideoPlayerManager.getCurrentJzvd();
+        if (HVideoPlayerManager.getCurrentJzvd() != null && HVideoPlayerManager.getCurrentJzvd().currentScreen != HVideoPlayer.SCREEN_WINDOW_TINY) {
+            HVideoPlayer videoPlayer = HVideoPlayerManager.getCurrentJzvd();
             if (((ViewGroup) view).indexOfChild(videoPlayer) != -1) {
-                if (videoPlayer.currentState == JZVideoPlayer.CURRENT_STATE_PAUSE) {
-                    JZVideoPlayer.releaseAllVideos();
+                if (videoPlayer.currentState == HVideoPlayer.CURRENT_STATE_PAUSE) {
+                    HVideoPlayer.releaseAllVideos();
                 } else {
                     videoPlayer.startWindowTiny();
                 }
@@ -336,20 +336,20 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     }
 
     public static void setTextureViewRotation(int rotation) {
-        if (JZMediaManager.textureView != null) {
-            JZMediaManager.textureView.setRotation(rotation);
+        if (HMediaManager.textureView != null) {
+            HMediaManager.textureView.setRotation(rotation);
         }
     }
 
     public static void setVideoImageDisplayType(int type) {
-        JZVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE = type;
-        if (JZMediaManager.textureView != null) {
-            JZMediaManager.textureView.requestLayout();
+        HVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE = type;
+        if (HMediaManager.textureView != null) {
+            HMediaManager.textureView.requestLayout();
         }
     }
 
     public Object getCurrentUrl() {
-        return JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex);
+        return HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex);
     }
 
     public abstract int getLayoutId();
@@ -395,30 +395,30 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     }
 
     public void setUp(Object[] dataSourceObjects, int defaultUrlMapIndex, int screen, Object... objects) {
-        if (this.dataSourceObjects != null && JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) != null &&
-                JZUtils.getCurrentFromDataSource(this.dataSourceObjects, currentUrlMapIndex).equals(JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex))) {
+        if (this.dataSourceObjects != null && HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) != null &&
+                HUtils.getCurrentFromDataSource(this.dataSourceObjects, currentUrlMapIndex).equals(HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex))) {
             return;
         }
-        if (isCurrentJZVD() && JZUtils.dataSourceObjectsContainsUri(dataSourceObjects, JZMediaManager.getCurrentDataSource())) {
+        if (isCurrentJZVD() && HUtils.dataSourceObjectsContainsUri(dataSourceObjects, HMediaManager.getCurrentDataSource())) {
             long position = 0;
             try {
-                position = JZMediaManager.getCurrentPosition();
+                position = HMediaManager.getCurrentPosition();
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
             if (position != 0) {
-                JZUtils.saveProgress(getContext(), JZMediaManager.getCurrentDataSource(), position);
+                HUtils.saveProgress(getContext(), HMediaManager.getCurrentDataSource(), position);
             }
-            JZMediaManager.instance().releaseMediaPlayer();
-        } else if (isCurrentJZVD() && !JZUtils.dataSourceObjectsContainsUri(dataSourceObjects, JZMediaManager.getCurrentDataSource())) {
+            HMediaManager.instance().releaseMediaPlayer();
+        } else if (isCurrentJZVD() && !HUtils.dataSourceObjectsContainsUri(dataSourceObjects, HMediaManager.getCurrentDataSource())) {
             startWindowTiny();
-        } else if (!isCurrentJZVD() && JZUtils.dataSourceObjectsContainsUri(dataSourceObjects, JZMediaManager.getCurrentDataSource())) {
-            if (JZVideoPlayerManager.getCurrentJzvd() != null &&
-                    JZVideoPlayerManager.getCurrentJzvd().currentScreen == JZVideoPlayer.SCREEN_WINDOW_TINY) {
+        } else if (!isCurrentJZVD() && HUtils.dataSourceObjectsContainsUri(dataSourceObjects, HMediaManager.getCurrentDataSource())) {
+            if (HVideoPlayerManager.getCurrentJzvd() != null &&
+                    HVideoPlayerManager.getCurrentJzvd().currentScreen == HVideoPlayer.SCREEN_WINDOW_TINY) {
                 //需要退出小窗退到我这里，我这里是第一层级
                 tmp_test_back = true;
             }
-        } else if (!isCurrentJZVD() && !JZUtils.dataSourceObjectsContainsUri(dataSourceObjects, JZMediaManager.getCurrentDataSource())) {
+        } else if (!isCurrentJZVD() && !HUtils.dataSourceObjectsContainsUri(dataSourceObjects, HMediaManager.getCurrentDataSource())) {
         }
         this.dataSourceObjects = dataSourceObjects;
         this.currentUrlMapIndex = defaultUrlMapIndex;
@@ -433,30 +433,30 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         int i = v.getId();
         if (i == R.id.start) {
             Log.i(TAG, "onClick start [" + this.hashCode() + "] ");
-            if (dataSourceObjects == null || JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
+            if (dataSourceObjects == null || HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (currentState == CURRENT_STATE_NORMAL) {
-                if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
-                        JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                        !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                    showWifiDialog(JZUserAction.ON_CLICK_START_ICON);
+                if (!HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
+                        HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                        !HUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                    showWifiDialog(HUserAction.ON_CLICK_START_ICON);
                     return;
                 }
                 startVideo();
-                onEvent(JZUserAction.ON_CLICK_START_ICON);
+                onEvent(HUserAction.ON_CLICK_START_ICON);
             } else if (currentState == CURRENT_STATE_PLAYING) {
-                onEvent(JZUserAction.ON_CLICK_PAUSE);
+                onEvent(HUserAction.ON_CLICK_PAUSE);
                 Log.d(TAG, "pauseVideo [" + this.hashCode() + "] ");
-                JZMediaManager.pause();
+                HMediaManager.pause();
                 onStatePause();
             } else if (currentState == CURRENT_STATE_PAUSE) {
-                onEvent(JZUserAction.ON_CLICK_RESUME);
-                JZMediaManager.start();
+                onEvent(HUserAction.ON_CLICK_RESUME);
+                HMediaManager.start();
                 onStatePlaying();
             } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
-                onEvent(JZUserAction.ON_CLICK_START_AUTO_COMPLETE);
+                onEvent(HUserAction.ON_CLICK_START_AUTO_COMPLETE);
                 startVideo();
             }
         } else if (i == R.id.fullscreen) {
@@ -467,7 +467,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                 backPress();
             } else {
                 Log.d(TAG, "toFullscreenActivity [" + this.hashCode() + "] ");
-                onEvent(JZUserAction.ON_ENTER_FULLSCREEN);
+                onEvent(HUserAction.ON_ENTER_FULLSCREEN);
                 startWindowFullscreen();
             }
         }
@@ -511,7 +511,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                                     //如果y轴滑动距离超过设置的处理范围，那么进行滑动事件处理
                                     if (mDownX < mScreenWidth * 0.5f) {//左侧改变亮度
                                         mChangeBrightness = true;
-                                        WindowManager.LayoutParams lp = JZUtils.getWindow(getContext()).getAttributes();
+                                        WindowManager.LayoutParams lp = HUtils.getWindow(getContext()).getAttributes();
                                         if (lp.screenBrightness < 0) {
                                             try {
                                                 mGestureDownBrightness = Settings.System.getInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
@@ -536,8 +536,8 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                         mSeekTimePosition = (int) (mGestureDownPosition + deltaX * totalTimeDuration / mScreenWidth);
                         if (mSeekTimePosition > totalTimeDuration)
                             mSeekTimePosition = totalTimeDuration;
-                        String seekTime = JZUtils.stringForTime(mSeekTimePosition);
-                        String totalTime = JZUtils.stringForTime(totalTimeDuration);
+                        String seekTime = HUtils.stringForTime(mSeekTimePosition);
+                        String totalTime = HUtils.stringForTime(totalTimeDuration);
 
                         showProgressDialog(deltaX, seekTime, mSeekTimePosition, totalTime, totalTimeDuration);
                     }
@@ -554,7 +554,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                     if (mChangeBrightness) {
                         deltaY = -deltaY;
                         int deltaV = (int) (255 * deltaY * 3 / mScreenHeight);
-                        WindowManager.LayoutParams params = JZUtils.getWindow(getContext()).getAttributes();
+                        WindowManager.LayoutParams params = HUtils.getWindow(getContext()).getAttributes();
                         if (((mGestureDownBrightness + deltaV) / 255) >= 1) {//这和声音有区别，必须自己过滤一下负值
                             params.screenBrightness = 1;
                         } else if (((mGestureDownBrightness + deltaV) / 255) <= 0) {
@@ -562,7 +562,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                         } else {
                             params.screenBrightness = (mGestureDownBrightness + deltaV) / 255;
                         }
-                        JZUtils.getWindow(getContext()).setAttributes(params);
+                        HUtils.getWindow(getContext()).setAttributes(params);
                         //dialog中显示百分比
                         int brightnessPercent = (int) (mGestureDownBrightness * 100 / 255 + deltaY * 3 * 100 / mScreenHeight);
                         showBrightnessDialog(brightnessPercent);
@@ -576,14 +576,14 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                     dismissVolumeDialog();
                     dismissBrightnessDialog();
                     if (mChangePosition) {
-                        onEvent(JZUserAction.ON_TOUCH_SCREEN_SEEK_POSITION);
-                        JZMediaManager.seekTo(mSeekTimePosition);
+                        onEvent(HUserAction.ON_TOUCH_SCREEN_SEEK_POSITION);
+                        HMediaManager.seekTo(mSeekTimePosition);
                         long duration = getDuration();
                         int progress = (int) (mSeekTimePosition * 100 / (duration == 0 ? 1 : duration));
                         progressBar.setProgress(progress);
                     }
                     if (mChangeVolume) {
-                        onEvent(JZUserAction.ON_TOUCH_SCREEN_SEEK_VOLUME);
+                        onEvent(HUserAction.ON_TOUCH_SCREEN_SEEK_VOLUME);
                     }
                     startProgressTimer();
                     break;
@@ -593,19 +593,19 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     }
 
     public void startVideo() {
-        JZVideoPlayerManager.completeAll();
+        HVideoPlayerManager.completeAll();
         Log.d(TAG, "startVideo [" + this.hashCode() + "] ");
         initTextureView();
         addTextureView();
         AudioManager mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
-        JZUtils.scanForActivity(getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        HUtils.scanForActivity(getContext()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        JZMediaManager.setDataSource(dataSourceObjects);
-        JZMediaManager.setCurrentDataSource(JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
-        JZMediaManager.instance().positionInList = positionInList;
+        HMediaManager.setDataSource(dataSourceObjects);
+        HMediaManager.setCurrentDataSource(HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
+        HMediaManager.instance().positionInList = positionInList;
         onStatePreparing();
-        JZVideoPlayerManager.setFirstFloor(this);
+        HVideoPlayerManager.setFirstFloor(this);
     }
 
     public void onPrepared() {
@@ -660,19 +660,19 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         currentState = CURRENT_STATE_PREPARING_CHANGING_URL;
         this.currentUrlMapIndex = urlMapIndex;
         this.seekToInAdvance = seekToInAdvance;
-        JZMediaManager.setDataSource(dataSourceObjects);
-        JZMediaManager.setCurrentDataSource(JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
-        JZMediaManager.instance().prepare();
+        HMediaManager.setDataSource(dataSourceObjects);
+        HMediaManager.setCurrentDataSource(HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
+        HMediaManager.instance().prepare();
     }
 
     public void onStatePrepared() {//因为这个紧接着就会进入播放状态，所以不设置state
         if (seekToInAdvance != 0) {
-            JZMediaManager.seekTo(seekToInAdvance);
+            HMediaManager.seekTo(seekToInAdvance);
             seekToInAdvance = 0;
         } else {
-            long position = JZUtils.getSavedProgress(getContext(), JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
+            long position = HUtils.getSavedProgress(getContext(), HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
             if (position != 0) {
-                JZMediaManager.seekTo(position);
+                HMediaManager.seekTo(position);
             }
         }
     }
@@ -712,7 +712,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         if (what != 38 && extra != -38 && what != -38 && extra != 38 && extra != -19) {
             onStateError();
             if (isCurrentPlay()) {
-                JZMediaManager.instance().releaseMediaPlayer();
+                HMediaManager.instance().releaseMediaPlayer();
             }
         }
     }
@@ -740,7 +740,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     public void onAutoCompletion() {
         Runtime.getRuntime().gc();
         Log.i(TAG, "onAutoCompletion " + " [" + this.hashCode() + "] ");
-        onEvent(JZUserAction.ON_AUTO_COMPLETE);
+        onEvent(HUserAction.ON_AUTO_COMPLETE);
         dismissVolumeDialog();
         dismissProgressDialog();
         dismissBrightnessDialog();
@@ -750,43 +750,43 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         if (currentScreen == SCREEN_WINDOW_FULLSCREEN || currentScreen == SCREEN_WINDOW_TINY) {
             backPress();
         }
-        JZMediaManager.instance().releaseMediaPlayer();
-        JZUtils.saveProgress(getContext(), JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), 0);
+        HMediaManager.instance().releaseMediaPlayer();
+        HUtils.saveProgress(getContext(), HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), 0);
     }
 
     public void onCompletion() {
         Log.i(TAG, "onCompletion " + " [" + this.hashCode() + "] ");
         if (currentState == CURRENT_STATE_PLAYING || currentState == CURRENT_STATE_PAUSE) {
             long position = getCurrentPositionWhenPlaying();
-            JZUtils.saveProgress(getContext(), JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), position);
+            HUtils.saveProgress(getContext(), HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), position);
         }
         cancelProgressTimer();
         onStateNormal();
-        textureViewContainer.removeView(JZMediaManager.textureView);
-        JZMediaManager.instance().currentVideoWidth = 0;
-        JZMediaManager.instance().currentVideoHeight = 0;
+        textureViewContainer.removeView(HMediaManager.textureView);
+        HMediaManager.instance().currentVideoWidth = 0;
+        HMediaManager.instance().currentVideoHeight = 0;
 
         AudioManager mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
-        JZUtils.scanForActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        HUtils.scanForActivity(getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         clearFullscreenLayout();
-        JZUtils.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
+        HUtils.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
 
-        if (JZMediaManager.surface != null) JZMediaManager.surface.release();
-        if (JZMediaManager.savedSurfaceTexture != null)
-            JZMediaManager.savedSurfaceTexture.release();
-        JZMediaManager.textureView = null;
-        JZMediaManager.savedSurfaceTexture = null;
+        if (HMediaManager.surface != null) HMediaManager.surface.release();
+        if (HMediaManager.savedSurfaceTexture != null)
+            HMediaManager.savedSurfaceTexture.release();
+        HMediaManager.textureView = null;
+        HMediaManager.savedSurfaceTexture = null;
     }
 
     public void release() {
-        if (JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).equals(JZMediaManager.getCurrentDataSource()) &&
+        if (HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).equals(HMediaManager.getCurrentDataSource()) &&
                 (System.currentTimeMillis() - CLICK_QUIT_FULLSCREEN_TIME) > FULL_SCREEN_NORMAL_DELAY) {
             //在非全屏的情况下只能backPress()
-            if (JZVideoPlayerManager.getSecondFloor() != null &&
-                    JZVideoPlayerManager.getSecondFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN) {//点击全屏
-            } else if (JZVideoPlayerManager.getSecondFloor() == null && JZVideoPlayerManager.getFirstFloor() != null &&
-                    JZVideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN) {//直接全屏
+            if (HVideoPlayerManager.getSecondFloor() != null &&
+                    HVideoPlayerManager.getSecondFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN) {//点击全屏
+            } else if (HVideoPlayerManager.getSecondFloor() == null && HVideoPlayerManager.getFirstFloor() != null &&
+                    HVideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN) {//直接全屏
             } else {
                 Log.d(TAG, "releaseMediaPlayer [" + this.hashCode() + "]");
                 releaseAllVideos();
@@ -796,8 +796,8 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     public void initTextureView() {
         removeTextureView();
-        JZMediaManager.textureView = new JZResizeTextureView(getContext());
-        JZMediaManager.textureView.setSurfaceTextureListener(JZMediaManager.instance());
+        HMediaManager.textureView = new HResizeTextureView(getContext());
+        HMediaManager.textureView.setSurfaceTextureListener(HMediaManager.instance());
     }
 
     public void addTextureView() {
@@ -807,18 +807,18 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         Gravity.CENTER);
-        textureViewContainer.addView(JZMediaManager.textureView, layoutParams);
+        textureViewContainer.addView(HMediaManager.textureView, layoutParams);
     }
 
     public void removeTextureView() {
-        JZMediaManager.savedSurfaceTexture = null;
-        if (JZMediaManager.textureView != null && JZMediaManager.textureView.getParent() != null) {
-            ((ViewGroup) JZMediaManager.textureView.getParent()).removeView(JZMediaManager.textureView);
+        HMediaManager.savedSurfaceTexture = null;
+        if (HMediaManager.textureView != null && HMediaManager.textureView.getParent() != null) {
+            ((ViewGroup) HMediaManager.textureView.getParent()).removeView(HMediaManager.textureView);
         }
     }
 
     public void clearFullscreenLayout() {
-        ViewGroup vp = (JZUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
+        ViewGroup vp = (HUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
                 .findViewById(Window.ID_ANDROID_CONTENT);
         View oldF = vp.findViewById(R.id.jz_fullscreen_id);
         View oldT = vp.findViewById(R.id.jz_tiny_id);
@@ -832,23 +832,23 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     }
 
     public void clearFloatScreen() {
-        JZUtils.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
+        HUtils.setRequestedOrientation(getContext(), NORMAL_ORIENTATION);
         showSupportActionBar(getContext());
-        JZVideoPlayer currJzvd = JZVideoPlayerManager.getCurrentJzvd();
-        currJzvd.textureViewContainer.removeView(JZMediaManager.textureView);
-        ViewGroup vp = (JZUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
+        HVideoPlayer currJzvd = HVideoPlayerManager.getCurrentJzvd();
+        currJzvd.textureViewContainer.removeView(HMediaManager.textureView);
+        ViewGroup vp = (HUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
                 .findViewById(Window.ID_ANDROID_CONTENT);
         vp.removeView(currJzvd);
-        JZVideoPlayerManager.setSecondFloor(null);
+        HVideoPlayerManager.setSecondFloor(null);
     }
 
     public void onVideoSizeChanged() {
         Log.i(TAG, "onVideoSizeChanged " + " [" + this.hashCode() + "] ");
-        if (JZMediaManager.textureView != null) {
+        if (HMediaManager.textureView != null) {
             if (videoRotation != 0) {
-                JZMediaManager.textureView.setRotation(videoRotation);
+                HMediaManager.textureView.setRotation(videoRotation);
             }
-            JZMediaManager.textureView.setVideoSize(JZMediaManager.instance().currentVideoWidth, JZMediaManager.instance().currentVideoHeight);
+            HMediaManager.textureView.setVideoSize(HMediaManager.instance().currentVideoWidth, HMediaManager.instance().currentVideoHeight);
         }
     }
 
@@ -874,8 +874,8 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         if (!mTouchingProgressBar) {
             if (progress != 0) progressBar.setProgress(progress);
         }
-        if (position != 0) currentTimeTextView.setText(JZUtils.stringForTime(position));
-        totalTimeTextView.setText(JZUtils.stringForTime(duration));
+        if (position != 0) currentTimeTextView.setText(HUtils.stringForTime(position));
+        totalTimeTextView.setText(HUtils.stringForTime(duration));
     }
 
     public void setBufferProgress(int bufferProgress) {
@@ -885,19 +885,19 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     public void resetProgressAndTime() {
         progressBar.setProgress(0);
         progressBar.setSecondaryProgress(0);
-        currentTimeTextView.setText(JZUtils.stringForTime(0));
-        totalTimeTextView.setText(JZUtils.stringForTime(0));
+        currentTimeTextView.setText(HUtils.stringForTime(0));
+        totalTimeTextView.setText(HUtils.stringForTime(0));
     }
 
     public long getCurrentPositionWhenPlaying() {
         long position = 0;
         //TODO 这块的判断应该根据MediaPlayer来
-//        if (JZMediaManager.instance().mediaPlayer == null)
+//        if (HMediaManager.instance().mediaPlayer == null)
 //            return position;//这行代码不应该在这，如果代码和逻辑万无一失的话，心头之恨呐
         if (currentState == CURRENT_STATE_PLAYING ||
                 currentState == CURRENT_STATE_PAUSE) {
             try {
-                position = JZMediaManager.getCurrentPosition();
+                position = HMediaManager.getCurrentPosition();
             } catch (IllegalStateException e) {
                 e.printStackTrace();
                 return position;
@@ -909,9 +909,9 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     public long getDuration() {
         long duration = 0;
         //TODO MediaPlayer 判空的问题
-//        if (JZMediaManager.instance().mediaPlayer == null) return duration;
+//        if (HMediaManager.instance().mediaPlayer == null) return duration;
         try {
-            duration = JZMediaManager.getDuration();
+            duration = HMediaManager.getDuration();
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return duration;
@@ -933,7 +933,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         Log.i(TAG, "bottomProgress onStopTrackingTouch [" + this.hashCode() + "] ");
-        onEvent(JZUserAction.ON_SEEK_POSITION);
+        onEvent(HUserAction.ON_SEEK_POSITION);
         startProgressTimer();
         ViewParent vpup = getParent();
         while (vpup != null) {
@@ -943,7 +943,7 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
         if (currentState != CURRENT_STATE_PLAYING &&
                 currentState != CURRENT_STATE_PAUSE) return;
         long time = seekBar.getProgress() * getDuration() / 100;
-        JZMediaManager.seekTo(time);
+        HMediaManager.seekTo(time);
         Log.i(TAG, "seekTo " + time + " [" + this.hashCode() + "] ");
     }
 
@@ -954,28 +954,28 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
     public void startWindowFullscreen() {
         Log.i(TAG, "startWindowFullscreen " + " [" + this.hashCode() + "] ");
         hideSupportActionBar(getContext());
-        JZUtils.setRequestedOrientation(getContext(), FULLSCREEN_ORIENTATION);
+        HUtils.setRequestedOrientation(getContext(), FULLSCREEN_ORIENTATION);
 
-        ViewGroup vp = (JZUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
+        ViewGroup vp = (HUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
                 .findViewById(Window.ID_ANDROID_CONTENT);
         View old = vp.findViewById(R.id.jz_fullscreen_id);
         if (old != null) {
             vp.removeView(old);
         }
-        textureViewContainer.removeView(JZMediaManager.textureView);
+        textureViewContainer.removeView(HMediaManager.textureView);
         try {
-            Constructor<JZVideoPlayer> constructor = (Constructor<JZVideoPlayer>) JZVideoPlayer.this.getClass().getConstructor(Context.class);
-            JZVideoPlayer jzVideoPlayer = constructor.newInstance(getContext());
+            Constructor<HVideoPlayer> constructor = (Constructor<HVideoPlayer>) HVideoPlayer.this.getClass().getConstructor(Context.class);
+            HVideoPlayer jzVideoPlayer = constructor.newInstance(getContext());
             jzVideoPlayer.setId(R.id.jz_fullscreen_id);
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             vp.addView(jzVideoPlayer, lp);
             jzVideoPlayer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
-            jzVideoPlayer.setUp(dataSourceObjects, currentUrlMapIndex, JZVideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN, objects);
+            jzVideoPlayer.setUp(dataSourceObjects, currentUrlMapIndex, HVideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN, objects);
             jzVideoPlayer.setState(currentState);
             jzVideoPlayer.addTextureView();
-            JZVideoPlayerManager.setSecondFloor(jzVideoPlayer);
+            HVideoPlayerManager.setSecondFloor(jzVideoPlayer);
 //            final Animation ra = AnimationUtils.loadAnimation(getContext(), R.anim.start_fullscreen);
 //            jzVideoPlayer.setAnimation(ra);
             onStateNormal();
@@ -989,28 +989,28 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     public void startWindowTiny() {
         Log.i(TAG, "startWindowTiny " + " [" + this.hashCode() + "] ");
-        onEvent(JZUserAction.ON_ENTER_TINYSCREEN);
+        onEvent(HUserAction.ON_ENTER_TINYSCREEN);
         if (currentState == CURRENT_STATE_NORMAL || currentState == CURRENT_STATE_ERROR || currentState == CURRENT_STATE_AUTO_COMPLETE)
             return;
-        ViewGroup vp = (JZUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
+        ViewGroup vp = (HUtils.scanForActivity(getContext()))//.getWindow().getDecorView();
                 .findViewById(Window.ID_ANDROID_CONTENT);
         View old = vp.findViewById(R.id.jz_tiny_id);
         if (old != null) {
             vp.removeView(old);
         }
-        textureViewContainer.removeView(JZMediaManager.textureView);
+        textureViewContainer.removeView(HMediaManager.textureView);
 
         try {
-            Constructor<JZVideoPlayer> constructor = (Constructor<JZVideoPlayer>) JZVideoPlayer.this.getClass().getConstructor(Context.class);
-            JZVideoPlayer jzVideoPlayer = constructor.newInstance(getContext());
+            Constructor<HVideoPlayer> constructor = (Constructor<HVideoPlayer>) HVideoPlayer.this.getClass().getConstructor(Context.class);
+            HVideoPlayer jzVideoPlayer = constructor.newInstance(getContext());
             jzVideoPlayer.setId(R.id.jz_tiny_id);
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(400, 400);
             lp.gravity = Gravity.RIGHT | Gravity.BOTTOM;
             vp.addView(jzVideoPlayer, lp);
-            jzVideoPlayer.setUp(dataSourceObjects, currentUrlMapIndex, JZVideoPlayerStandard.SCREEN_WINDOW_TINY, objects);
+            jzVideoPlayer.setUp(dataSourceObjects, currentUrlMapIndex, HVideoPlayerStandard.SCREEN_WINDOW_TINY, objects);
             jzVideoPlayer.setState(currentState);
             jzVideoPlayer.addTextureView();
-            JZVideoPlayerManager.setSecondFloor(jzVideoPlayer);
+            HVideoPlayerManager.setSecondFloor(jzVideoPlayer);
             onStateNormal();
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -1021,20 +1021,20 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     public boolean isCurrentPlay() {
         return isCurrentJZVD()
-                && JZUtils.dataSourceObjectsContainsUri(dataSourceObjects, JZMediaManager.getCurrentDataSource());//不仅正在播放的url不能一样，并且各个清晰度也不能一样
+                && HUtils.dataSourceObjectsContainsUri(dataSourceObjects, HMediaManager.getCurrentDataSource());//不仅正在播放的url不能一样，并且各个清晰度也不能一样
     }
 
     public boolean isCurrentJZVD() {
-        return JZVideoPlayerManager.getCurrentJzvd() != null
-                && JZVideoPlayerManager.getCurrentJzvd() == this;
+        return HVideoPlayerManager.getCurrentJzvd() != null
+                && HVideoPlayerManager.getCurrentJzvd() == this;
     }
 
     //退出全屏和小窗的方法
     public void playOnThisJzvd() {
         Log.i(TAG, "playOnThisJzvd " + " [" + this.hashCode() + "] ");
         //1.清空全屏和小窗的jzvd
-        currentState = JZVideoPlayerManager.getSecondFloor().currentState;
-        currentUrlMapIndex = JZVideoPlayerManager.getSecondFloor().currentUrlMapIndex;
+        currentState = HVideoPlayerManager.getSecondFloor().currentState;
+        currentUrlMapIndex = HVideoPlayerManager.getSecondFloor().currentUrlMapIndex;
         clearFloatScreen();
         //2.在本jzvd上播放
         setState(currentState);
@@ -1048,11 +1048,11 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
                 && currentScreen != SCREEN_WINDOW_FULLSCREEN
                 && currentScreen != SCREEN_WINDOW_TINY) {
             if (x > 0) {
-                JZUtils.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                HUtils.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else {
-                JZUtils.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                HUtils.setRequestedOrientation(getContext(), ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             }
-            onEvent(JZUserAction.ON_ENTER_FULLSCREEN);
+            onEvent(HUserAction.ON_ENTER_FULLSCREEN);
             startWindowFullscreen();
         }
     }
@@ -1069,12 +1069,12 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
 
     public void onEvent(int type) {
         if (JZ_USER_EVENT != null && isCurrentPlay() && dataSourceObjects != null) {
-            JZ_USER_EVENT.onEvent(type, JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), currentScreen, objects);
+            JZ_USER_EVENT.onEvent(type, HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), currentScreen, objects);
         }
     }
 
-    public static void setMediaInterface(JZMediaInterface mediaInterface) {
-        JZMediaManager.instance().jzMediaInterface = mediaInterface;
+    public static void setMediaInterface(HMediaInterface mediaInterface) {
+        HMediaManager.instance().hMediaInterface = mediaInterface;
     }
 
     //TODO 是否有用
@@ -1119,8 +1119,8 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
             //过滤掉用力过猛会有一个反向的大数值
             if (((x > -15 && x < -10) || (x < 15 && x > 10)) && Math.abs(y) < 1.5) {
                 if ((System.currentTimeMillis() - lastAutoFullscreenTime) > 2000) {
-                    if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-                        JZVideoPlayerManager.getCurrentJzvd().autoFullscreen(x);
+                    if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                        HVideoPlayerManager.getCurrentJzvd().autoFullscreen(x);
                     }
                     lastAutoFullscreenTime = System.currentTimeMillis();
                 }
@@ -1149,5 +1149,4 @@ public abstract class JZVideoPlayer extends FrameLayout implements View.OnClickL
             }
         }
     }
-
 }

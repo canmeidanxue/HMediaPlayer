@@ -1,32 +1,30 @@
 package com.example.bluesky.hmediaplayer;
 
 /**
- * Put JZVideoPlayer into layout
- * From a JZVideoPlayer to another JZVideoPlayer
- * Created by Nathen on 16/7/26.
+ * Created by blue_sky on 2017/12/18.
  */
-public class JZVideoPlayerManager {
 
-    public static JZVideoPlayer FIRST_FLOOR_JZVD;
-    public static JZVideoPlayer SECOND_FLOOR_JZVD;
+public class HVideoPlayerManager {
+    public static HVideoPlayer FIRST_FLOOR_JZVD;
+    public static HVideoPlayer SECOND_FLOOR_JZVD;
 
-    public static JZVideoPlayer getFirstFloor() {
+    public static HVideoPlayer getFirstFloor() {
         return FIRST_FLOOR_JZVD;
     }
 
-    public static void setFirstFloor(JZVideoPlayer jzVideoPlayer) {
+    public static void setFirstFloor(HVideoPlayer jzVideoPlayer) {
         FIRST_FLOOR_JZVD = jzVideoPlayer;
     }
 
-    public static JZVideoPlayer getSecondFloor() {
+    public static HVideoPlayer getSecondFloor() {
         return SECOND_FLOOR_JZVD;
     }
 
-    public static void setSecondFloor(JZVideoPlayer jzVideoPlayer) {
+    public static void setSecondFloor(HVideoPlayer jzVideoPlayer) {
         SECOND_FLOOR_JZVD = jzVideoPlayer;
     }
 
-    public static JZVideoPlayer getCurrentJzvd() {
+    public static HVideoPlayer getCurrentJzvd() {
         if (getSecondFloor() != null) {
             return getSecondFloor();
         }

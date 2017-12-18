@@ -12,21 +12,20 @@ import android.view.Surface;
 import android.view.TextureView;
 
 /**
- * 这个类用来和jzvd互相调用，当jzvd需要调用Media的时候调用这个类，当MediaPlayer有回调的时候，通过这个类回调JZVD
- * Created by Nathen on 2017/11/18.
+ * Created by blue_sky on 2017/12/18.
  */
-public class JZMediaManager implements TextureView.SurfaceTextureListener {
 
+public class HMediaManager implements TextureView.SurfaceTextureListener{
     public static final String TAG = "JiaoZiVideoPlayer";
     public static final int HANDLER_PREPARE = 0;
     public static final int HANDLER_RELEASE = 2;
 
-    public static JZResizeTextureView textureView;
+    public static HResizeTextureView textureView;
     public static SurfaceTexture savedSurfaceTexture;
     public static Surface surface;
-    public static JZMediaManager jzMediaManager;
+    public static HMediaManager jzMediaManager;
     public int positionInList = -1;
-    public JZMediaInterface jzMediaInterface;
+    public HMediaInterface hMediaInterface;
     public int currentVideoWidth = 0;
     public int currentVideoHeight = 0;
 
@@ -34,64 +33,64 @@ public class JZMediaManager implements TextureView.SurfaceTextureListener {
     public MediaHandler mMediaHandler;
     public Handler mainThreadHandler;
 
-    public JZMediaManager() {
+    public HMediaManager() {
         mMediaHandlerThread = new HandlerThread(TAG);
         mMediaHandlerThread.start();
         mMediaHandler = new MediaHandler(mMediaHandlerThread.getLooper());
         mainThreadHandler = new Handler();
-        if (jzMediaInterface == null){
-            jzMediaInterface = new JZMediaSystem();
+        if (hMediaInterface == null){
+            hMediaInterface = new HMediaSystem();
         }
 
     }
 
-    public static JZMediaManager instance() {
+    public static HMediaManager instance() {
         if (jzMediaManager == null) {
-            jzMediaManager = new JZMediaManager();
+            jzMediaManager = new HMediaManager();
         }
         return jzMediaManager;
     }
 
     public static Object[] getDataSource() {
-        return instance().jzMediaInterface.dataSourceObjects;
+        return instance().hMediaInterface.dataSourceObjects;
     }
 
     //这几个方法是不是多余了，为了不让其他地方动MediaInterface的方法
     public static void setDataSource(Object[] dataSourceObjects) {
-        instance().jzMediaInterface.dataSourceObjects = dataSourceObjects;
+        instance().hMediaInterface.dataSourceObjects = dataSourceObjects;
     }
 
     //正在播放的url或者uri
     public static Object getCurrentDataSource() {
-        return instance().jzMediaInterface.currentDataSource;
+        return instance().hMediaInterface.currentDataSource;
     }
 
     public static void setCurrentDataSource(Object currentDataSource) {
-        instance().jzMediaInterface.currentDataSource = currentDataSource;
+        instance().hMediaInterface.currentDataSource = currentDataSource;
     }
 
     public static long getCurrentPosition() {
-        return instance().jzMediaInterface.getCurrentPosition();
+        return instance().hMediaInterface.getCurrentPosition();
     }
 
     public static long getDuration() {
-        return instance().jzMediaInterface.getDuration();
+        return instance().hMediaInterface.getDuration();
     }
 
     public static void seekTo(long time) {
-        instance().jzMediaInterface.seekTo(time);
+        instance().hMediaInterface.seekTo(time);
     }
 
     public static void pause() {
-        instance().jzMediaInterface.pause();
+        instance().hMediaInterface.pause();
     }
 
     public static void start() {
-        instance().jzMediaInterface.start();
+        instance().hMediaInterface.start();
     }
 
     public static boolean isPlaying() {
-        return instance().jzMediaInterface.isPlaying();
+        return instance().hMediaInterface.isPlaying();
     }
 
     public void releaseMediaPlayer() {
@@ -110,7 +109,7 @@ public class JZMediaManager implements TextureView.SurfaceTextureListener {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-        Log.i(TAG, "onSurfaceTextureAvailable [" + JZVideoPlayerManager.getCurrentJzvd().hashCode() + "] ");
+        Log.i(TAG, "onSurfaceTextureAvailable [" + HVideoPlayerManager.getCurrentJzvd().hashCode() + "] ");
         if (savedSurfaceTexture == null) {
             savedSurfaceTexture = surfaceTexture;
             prepare();
@@ -147,15 +146,15 @@ public class JZMediaManager implements TextureView.SurfaceTextureListener {
                 case HANDLER_PREPARE:
                     currentVideoWidth = 0;
                     currentVideoHeight = 0;
-                    jzMediaInterface.prepare();
+                    hMediaInterface.prepare();
                     if (surface != null) {
                         surface.release();
                     }
                     surface = new Surface(savedSurfaceTexture);
-                    jzMediaInterface.setSurface(surface);
+                    hMediaInterface.setSurface(surface);
                     break;
                 case HANDLER_RELEASE:
-                    jzMediaInterface.release();
+                    hMediaInterface.release();
                     break;
             }
         }

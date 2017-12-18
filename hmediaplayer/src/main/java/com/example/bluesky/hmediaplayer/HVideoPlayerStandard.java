@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.media.AudioManager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,11 +32,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by Nathen
- * On 2016/04/18 16:15
+ * Created by blue_sky on 2017/12/18.
  */
-public class JZVideoPlayerStandard extends JZVideoPlayer {
 
+public class HVideoPlayerStandard extends HVideoPlayer {
     protected static Timer DISMISS_CONTROL_VIEW_TIMER;
 
     public ImageView backButton;
@@ -94,11 +92,11 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
         }
     };
 
-    public JZVideoPlayerStandard(Context context) {
+    public HVideoPlayerStandard(Context context) {
         super(context);
     }
 
-    public JZVideoPlayerStandard(Context context, AttributeSet attrs) {
+    public HVideoPlayerStandard(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -141,7 +139,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
             if (((LinkedHashMap) dataSourceObjects[0]).size() == 1) {
                 clarity.setVisibility(GONE);
             } else {
-                clarity.setText(JZUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+                clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
                 clarity.setVisibility(View.VISIBLE);
             }
             changeStartButtonSize((int) getResources().getDimension(R.dimen.jz_start_button_w_h_fullscreen));
@@ -165,7 +163,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
 
         if (tmp_test_back) {
             tmp_test_back = false;
-            JZVideoPlayerManager.setFirstFloor(this);
+            HVideoPlayerManager.setFirstFloor(this);
             backPress();
         }
     }
@@ -247,7 +245,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
                         bottomProgressBar.setProgress(progress);
                     }
                     if (!mChangePosition && !mChangeVolume) {
-                        onEvent(JZUserActionStandard.ON_CLICK_BLANK);
+                        onEvent(HUserActionStandard.ON_CLICK_BLANK);
                         onClickUiToggle();
                     }
                     break;
@@ -270,18 +268,18 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
         super.onClick(v);
         int i = v.getId();
         if (i == R.id.thumb) {
-            if (dataSourceObjects == null || JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
+            if (dataSourceObjects == null || HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (currentState == CURRENT_STATE_NORMAL) {
-                if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") &&
-                        !JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                        !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                    showWifiDialog(JZUserActionStandard.ON_CLICK_START_THUMB);
+                if (!HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") &&
+                        !HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                        !HUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                    showWifiDialog(HUserActionStandard.ON_CLICK_START_THUMB);
                     return;
                 }
-                onEvent(JZUserActionStandard.ON_CLICK_START_THUMB);
+                onEvent(HUserActionStandard.ON_CLICK_START_THUMB);
                 startVideo();
             } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
                 onClickUiToggle();
@@ -291,7 +289,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
         } else if (i == R.id.back) {
             backPress();
         } else if (i == R.id.back_tiny) {
-            if (JZVideoPlayerManager.getFirstFloor().currentScreen == JZVideoPlayer.SCREEN_WINDOW_LIST) {
+            if (HVideoPlayerManager.getFirstFloor().currentScreen == HVideoPlayer.SCREEN_WINDOW_LIST) {
                 quitFullscreenOrTinyWindow();
             } else {
                 backPress();
@@ -306,7 +304,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
                 public void onClick(View v) {
                     int index = (int) v.getTag();
                     onStatePreparingChangingUrl(index, getCurrentPositionWhenPlaying());
-                    clarity.setText(JZUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+                    clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
                     for (int j = 0; j < layout.getChildCount(); j++) {//设置点击之后的颜色
                         if (j == currentUrlMapIndex) {
                             ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
@@ -321,7 +319,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
             };
 
             for (int j = 0; j < ((LinkedHashMap) dataSourceObjects[0]).size(); j++) {
-                String key = JZUtils.getKeyFromDataSource(dataSourceObjects, j);
+                String key = HUtils.getKeyFromDataSource(dataSourceObjects, j);
                 TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.jz_layout_clarity_item, null);
                 clarityItem.setText(key);
                 clarityItem.setTag(j);
@@ -338,18 +336,18 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
             layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             clarityPopWindow.update(clarity, -40, 46, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
         } else if (i == R.id.retry_btn) {
-            if (!JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
-                    JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                    !JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                showWifiDialog(JZUserAction.ON_CLICK_START_ICON);
+            if (!HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
+                    HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                    !HUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                showWifiDialog(HUserAction.ON_CLICK_START_ICON);
                 return;
             }
             initTextureView();//和开始播放的代码重复
             addTextureView();
-            JZMediaManager.setDataSource(dataSourceObjects);
-            JZMediaManager.setCurrentDataSource(JZUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
+            HMediaManager.setDataSource(dataSourceObjects);
+            HMediaManager.setCurrentDataSource(HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
             onStatePreparing();
-            onEvent(JZUserAction.ON_CLICK_START_ERROR);
+            onEvent(HUserAction.ON_CLICK_START_ERROR);
         }
     }
 
@@ -362,7 +360,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                onEvent(JZUserActionStandard.ON_CLICK_START_THUMB);
+                onEvent(HUserActionStandard.ON_CLICK_START_THUMB);
                 startVideo();
                 WIFI_TIP_DIALOG_SHOWED = true;
             }
@@ -401,7 +399,7 @@ public class JZVideoPlayerStandard extends JZVideoPlayer {
     public void onClickUiToggle() {
         if (bottomContainer.getVisibility() != View.VISIBLE) {
             setSystemTimeAndBattery();
-            clarity.setText(JZUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+            clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
         }
         if (currentState == CURRENT_STATE_PREPARING) {
             changeUiToPreparing();

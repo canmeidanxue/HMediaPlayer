@@ -4,16 +4,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.Surface;
 
-
 import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * Created by Nathen on 2017/11/8.
- * 实现系统的播放引擎
+ * Created by blue_sky on 2017/12/18.
  */
-public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener {
 
+public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener{
     public MediaPlayer mediaPlayer;
 
     @Override
@@ -29,14 +27,14 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
             if (dataSourceObjects.length > 1) {
                 mediaPlayer.setLooping((boolean) dataSourceObjects[1]);
             }
-            mediaPlayer.setOnPreparedListener(JZMediaSystem.this);
-            mediaPlayer.setOnCompletionListener(JZMediaSystem.this);
-            mediaPlayer.setOnBufferingUpdateListener(JZMediaSystem.this);
+            mediaPlayer.setOnPreparedListener(HMediaSystem.this);
+            mediaPlayer.setOnCompletionListener(HMediaSystem.this);
+            mediaPlayer.setOnBufferingUpdateListener(HMediaSystem.this);
             mediaPlayer.setScreenOnWhilePlaying(true);
-            mediaPlayer.setOnSeekCompleteListener(JZMediaSystem.this);
-            mediaPlayer.setOnErrorListener(JZMediaSystem.this);
-            mediaPlayer.setOnInfoListener(JZMediaSystem.this);
-            mediaPlayer.setOnVideoSizeChangedListener(JZMediaSystem.this);
+            mediaPlayer.setOnSeekCompleteListener(HMediaSystem.this);
+            mediaPlayer.setOnErrorListener(HMediaSystem.this);
+            mediaPlayer.setOnInfoListener(HMediaSystem.this);
+            mediaPlayer.setOnVideoSizeChangedListener(HMediaSystem.this);
             Class<MediaPlayer> clazz = MediaPlayer.class;
             Method method = clazz.getDeclaredMethod("setDataSource", String.class, Map.class);
             if (dataSourceObjects.length > 2) {
@@ -90,11 +88,11 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
         if (currentDataSource.toString().toLowerCase().contains("mp3")) {
-            JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+            HMediaManager.instance().mainThreadHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-                        JZVideoPlayerManager.getCurrentJzvd().onPrepared();
+                    if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                        HVideoPlayerManager.getCurrentJzvd().onPrepared();
                     }
                 }
             });
@@ -103,11 +101,11 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-                    JZVideoPlayerManager.getCurrentJzvd().onAutoCompletion();
+                if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                    HVideoPlayerManager.getCurrentJzvd().onAutoCompletion();
                 }
             }
         });
@@ -115,11 +113,11 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
 
     @Override
     public void onBufferingUpdate(MediaPlayer mediaPlayer, final int percent) {
-        JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-                    JZVideoPlayerManager.getCurrentJzvd().setBufferProgress(percent);
+                if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                    HVideoPlayerManager.getCurrentJzvd().setBufferProgress(percent);
                 }
             }
         });
@@ -127,11 +125,11 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
 
     @Override
     public void onSeekComplete(MediaPlayer mediaPlayer) {
-        JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-                    JZVideoPlayerManager.getCurrentJzvd().onSeekComplete();
+                if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                    HVideoPlayerManager.getCurrentJzvd().onSeekComplete();
                 }
             }
         });
@@ -139,11 +137,11 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, final int what, final int extra) {
-        JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-                    JZVideoPlayerManager.getCurrentJzvd().onError(what, extra);
+                if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                    HVideoPlayerManager.getCurrentJzvd().onError(what, extra);
                 }
             }
         });
@@ -152,14 +150,14 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
 
     @Override
     public boolean onInfo(MediaPlayer mediaPlayer, final int what, final int extra) {
-        JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
+                if (HVideoPlayerManager.getCurrentJzvd() != null) {
                     if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                        JZVideoPlayerManager.getCurrentJzvd().onPrepared();
+                        HVideoPlayerManager.getCurrentJzvd().onPrepared();
                     } else {
-                        JZVideoPlayerManager.getCurrentJzvd().onInfo(what, extra);
+                        HVideoPlayerManager.getCurrentJzvd().onInfo(what, extra);
                     }
                 }
             }
@@ -169,13 +167,13 @@ public class JZMediaSystem extends JZMediaInterface implements MediaPlayer.OnPre
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mediaPlayer, int width, int height) {
-        JZMediaManager.instance().currentVideoWidth = width;
-        JZMediaManager.instance().currentVideoHeight = height;
-        JZMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        HMediaManager.instance().currentVideoWidth = width;
+        HMediaManager.instance().currentVideoHeight = height;
+        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (JZVideoPlayerManager.getCurrentJzvd() != null) {
-                    JZVideoPlayerManager.getCurrentJzvd().onVideoSizeChanged();
+                if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                    HVideoPlayerManager.getCurrentJzvd().onVideoSizeChanged();
                 }
             }
         });

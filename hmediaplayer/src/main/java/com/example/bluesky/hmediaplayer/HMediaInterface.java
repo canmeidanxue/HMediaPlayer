@@ -3,11 +3,11 @@ package com.example.bluesky.hmediaplayer;
 import android.view.Surface;
 
 /**
- * Created by Nathen on 2017/11/7.
+ * Created by blue_sky on 2017/12/18.
  * 自定义播放器
  */
-public abstract class JZMediaInterface {
 
+public abstract class HMediaInterface {
     public Object currentDataSource;//正在播放的当前url或uri
     /**
      * 第一个是url的map

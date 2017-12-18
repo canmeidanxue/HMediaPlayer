@@ -1,11 +1,10 @@
 package com.example.bluesky.hmediaplayer;
 
 /**
- * Created by Nathen
- * On 2016/04/04 22:13
+ * Created by blue_sky on 2017/12/18.
  */
-public interface JZUserAction {
 
+public interface HUserAction {
     int ON_CLICK_START_ICON = 0;
     int ON_CLICK_START_ERROR = 1;
     int ON_CLICK_START_AUTO_COMPLETE = 2;
@@ -25,5 +24,4 @@ public interface JZUserAction {
     int ON_TOUCH_SCREEN_SEEK_POSITION = 12;
 
     void onEvent(int type, Object url, int screen, Object... objects);
-
 }

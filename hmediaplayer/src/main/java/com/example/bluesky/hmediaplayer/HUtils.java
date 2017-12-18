@@ -7,9 +7,9 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Window;
 
 import java.util.Formatter;
@@ -18,10 +18,10 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 
 /**
- * Created by Nathen
- * On 2016/02/21 12:25
+ * Created by blue_sky on 2017/12/18.
  */
-public class JZUtils {
+
+public class HUtils {
     public static final String TAG = "JiaoZiVideoPlayer";
 
     public static String stringForTime(long timeMs) {
@@ -92,20 +92,20 @@ public class JZUtils {
     }
 
     public static void setRequestedOrientation(Context context, int orientation) {
-        if (JZUtils.getAppCompActivity(context) != null) {
-            JZUtils.getAppCompActivity(context).setRequestedOrientation(
+        if (HUtils.getAppCompActivity(context) != null) {
+            HUtils.getAppCompActivity(context).setRequestedOrientation(
                     orientation);
         } else {
-            JZUtils.scanForActivity(context).setRequestedOrientation(
+            HUtils.scanForActivity(context).setRequestedOrientation(
                     orientation);
         }
     }
 
     public static Window getWindow(Context context) {
-        if (JZUtils.getAppCompActivity(context) != null) {
-            return JZUtils.getAppCompActivity(context).getWindow();
+        if (HUtils.getAppCompActivity(context) != null) {
+            return HUtils.getAppCompActivity(context).getWindow();
         } else {
-            return JZUtils.scanForActivity(context).getWindow();
+            return HUtils.scanForActivity(context).getWindow();
         }
     }
 
@@ -115,7 +115,7 @@ public class JZUtils {
     }
 
     public static void saveProgress(Context context, Object url, long progress) {
-        if (!JZVideoPlayer.SAVE_PROGRESS) {
+        if (!HVideoPlayer.SAVE_PROGRESS) {
             return;
         }
         Log.i(TAG, "saveProgress: " + progress);
@@ -130,7 +130,7 @@ public class JZUtils {
     }
 
     public static long getSavedProgress(Context context, Object url) {
-        if (!JZVideoPlayer.SAVE_PROGRESS) {
+        if (!HVideoPlayer.SAVE_PROGRESS) {
             return 0;
         }
         SharedPreferences spn;
