@@ -2,9 +2,10 @@ package com.example.bluesky.hmediaplayer;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ * @author blue_sky
  */
 
-public interface HUserAction {
+public interface UserAction {
     int ON_CLICK_START_ICON = 0;
     int ON_CLICK_START_ERROR = 1;
     int ON_CLICK_START_AUTO_COMPLETE = 2;

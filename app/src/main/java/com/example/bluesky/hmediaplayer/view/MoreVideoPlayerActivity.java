@@ -7,9 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.bluesky.hmediaplayer.HMediaManager;
-import com.example.bluesky.hmediaplayer.HUtils;
-import com.example.bluesky.hmediaplayer.HVideoPlayer;
+import com.example.bluesky.hmediaplayer.MediaManager;
+import com.example.bluesky.hmediaplayer.Utils;
+import com.example.bluesky.hmediaplayer.VideoPlayer;
 import com.example.bluesky.hmediaplayer.R;
 import com.example.bluesky.hmediaplayer.view.adapter.AdapterRecyclerViewVideo;
 
@@ -40,16 +40,16 @@ public class MoreVideoPlayerActivity extends AppCompatActivity {
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
-                HVideoPlayer hVideoPlayer = view.findViewById(R.id.videoplayer);
-                if (hVideoPlayer != null && HUtils.dataSourceObjectsContainsUri(hVideoPlayer.dataSourceObjects, HMediaManager.getCurrentDataSource())) {
-                    HVideoPlayer.releaseAllVideos();
+                VideoPlayer hVideoPlayer = view.findViewById(R.id.videoplayer);
+                if (hVideoPlayer != null && Utils.dataSourceObjectsContainsUri(hVideoPlayer.dataSourceObjects, MediaManager.getCurrentDataSource())) {
+                    VideoPlayer.releaseAllVideos();
                 }
             }
         });
     }
     @Override
     public void onBackPressed() {
-        if (HVideoPlayer.backPress()) {
+        if (VideoPlayer.backPress()) {
             return;
         }
         super.onBackPressed();
@@ -58,7 +58,7 @@ public class MoreVideoPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        HVideoPlayer.releaseAllVideos();
+        VideoPlayer.releaseAllVideos();
     }
 
     @Override

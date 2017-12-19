@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.bluesky.hmediaplayer.HVideoPlayer;
-import com.example.bluesky.hmediaplayer.HVideoPlayerStandard;
+import com.example.bluesky.hmediaplayer.VideoPlayer;
+import com.example.bluesky.hmediaplayer.VideoPlayerStandard;
 import com.example.bluesky.hmediaplayer.R;
 import com.example.bluesky.hmediaplayer.modle.VideoConstant;
 import com.squareup.picasso.Picasso;
@@ -39,7 +39,7 @@ public class AdapterRecyclerViewVideo extends RecyclerView.Adapter<AdapterRecycl
         Log.i(TAG, "onBindViewHolder [" + holder.jzVideoPlayer.hashCode() + "] position=" + position);
 
         holder.jzVideoPlayer.setUp(
-                VideoConstant.videoUrls[0][position], HVideoPlayer.SCREEN_WINDOW_LIST,
+                VideoConstant.videoUrls[0][position], VideoPlayer.SCREEN_WINDOW_LIST,
                 VideoConstant.videoTitles[0][position]);
         Picasso.with(holder.jzVideoPlayer.getContext())
                 .load(VideoConstant.videoThumbs[0][position])
@@ -52,7 +52,7 @@ public class AdapterRecyclerViewVideo extends RecyclerView.Adapter<AdapterRecycl
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        HVideoPlayerStandard jzVideoPlayer;
+        VideoPlayerStandard jzVideoPlayer;
 
         public MyViewHolder(View itemView) {
             super(itemView);

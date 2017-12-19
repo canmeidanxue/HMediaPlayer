@@ -13,19 +13,20 @@ import android.view.TextureView;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ * @author blue_sky
  */
 
-public class HMediaManager implements TextureView.SurfaceTextureListener{
-    public static final String TAG = "JiaoZiVideoPlayer";
+public class MediaManager implements TextureView.SurfaceTextureListener {
+    public static final String TAG = "HVideoPlayer";
     public static final int HANDLER_PREPARE = 0;
     public static final int HANDLER_RELEASE = 2;
 
-    public static HResizeTextureView textureView;
+    public static ResizeTextureView textureView;
     public static SurfaceTexture savedSurfaceTexture;
     public static Surface surface;
-    public static HMediaManager jzMediaManager;
+    public static MediaManager jzMediaManager;
     public int positionInList = -1;
-    public HMediaInterface hMediaInterface;
+    public BaseMediaInterface hMediaInterface;
     public int currentVideoWidth = 0;
     public int currentVideoHeight = 0;
 
@@ -33,20 +34,20 @@ public class HMediaManager implements TextureView.SurfaceTextureListener{
     public MediaHandler mMediaHandler;
     public Handler mainThreadHandler;
 
-    public HMediaManager() {
+    public MediaManager() {
         mMediaHandlerThread = new HandlerThread(TAG);
         mMediaHandlerThread.start();
         mMediaHandler = new MediaHandler(mMediaHandlerThread.getLooper());
         mainThreadHandler = new Handler();
-        if (hMediaInterface == null){
-            hMediaInterface = new HMediaSystem();
+        if (hMediaInterface == null) {
+            hMediaInterface = new MediaSystem();
         }
 
     }
 
-    public static HMediaManager instance() {
+    public static MediaManager instance() {
         if (jzMediaManager == null) {
-            jzMediaManager = new HMediaManager();
+            jzMediaManager = new MediaManager();
         }
         return jzMediaManager;
     }
@@ -55,12 +56,16 @@ public class HMediaManager implements TextureView.SurfaceTextureListener{
         return instance().hMediaInterface.dataSourceObjects;
     }
 
-    //这几个方法是不是多余了，为了不让其他地方动MediaInterface的方法
+    /**
+     * 这几个方法是不是多余了，为了不让其他地方动MediaInterface的方法
+     */
     public static void setDataSource(Object[] dataSourceObjects) {
         instance().hMediaInterface.dataSourceObjects = dataSourceObjects;
     }
 
-    //正在播放的url或者uri
+    /**
+     * 正在播放的url或者uri
+     */
     public static Object getCurrentDataSource() {
         return instance().hMediaInterface.currentDataSource;
     }
@@ -109,7 +114,7 @@ public class HMediaManager implements TextureView.SurfaceTextureListener{
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-        Log.i(TAG, "onSurfaceTextureAvailable [" + HVideoPlayerManager.getCurrentJzvd().hashCode() + "] ");
+        Log.i(TAG, "onSurfaceTextureAvailable [" + VideoPlayerManager.getCurrentJzvd().hashCode() + "] ");
         if (savedSurfaceTexture == null) {
             savedSurfaceTexture = surfaceTexture;
             prepare();
@@ -155,6 +160,8 @@ public class HMediaManager implements TextureView.SurfaceTextureListener{
                     break;
                 case HANDLER_RELEASE:
                     hMediaInterface.release();
+                    break;
+                default:
                     break;
             }
         }

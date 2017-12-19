@@ -19,9 +19,10 @@ import java.util.Locale;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ * @author blue_sky
  */
 
-public class HUtils {
+public class Utils {
     public static final String TAG = "JiaoZiVideoPlayer";
 
     public static String stringForTime(long timeMs) {
@@ -92,20 +93,20 @@ public class HUtils {
     }
 
     public static void setRequestedOrientation(Context context, int orientation) {
-        if (HUtils.getAppCompActivity(context) != null) {
-            HUtils.getAppCompActivity(context).setRequestedOrientation(
+        if (Utils.getAppCompActivity(context) != null) {
+            Utils.getAppCompActivity(context).setRequestedOrientation(
                     orientation);
         } else {
-            HUtils.scanForActivity(context).setRequestedOrientation(
+            Utils.scanForActivity(context).setRequestedOrientation(
                     orientation);
         }
     }
 
     public static Window getWindow(Context context) {
-        if (HUtils.getAppCompActivity(context) != null) {
-            return HUtils.getAppCompActivity(context).getWindow();
+        if (Utils.getAppCompActivity(context) != null) {
+            return Utils.getAppCompActivity(context).getWindow();
         } else {
-            return HUtils.scanForActivity(context).getWindow();
+            return Utils.scanForActivity(context).getWindow();
         }
     }
 
@@ -115,7 +116,7 @@ public class HUtils {
     }
 
     public static void saveProgress(Context context, Object url, long progress) {
-        if (!HVideoPlayer.SAVE_PROGRESS) {
+        if (!VideoPlayer.SAVE_PROGRESS) {
             return;
         }
         Log.i(TAG, "saveProgress: " + progress);
@@ -130,7 +131,7 @@ public class HUtils {
     }
 
     public static long getSavedProgress(Context context, Object url) {
-        if (!HVideoPlayer.SAVE_PROGRESS) {
+        if (!VideoPlayer.SAVE_PROGRESS) {
             return 0;
         }
         SharedPreferences spn;

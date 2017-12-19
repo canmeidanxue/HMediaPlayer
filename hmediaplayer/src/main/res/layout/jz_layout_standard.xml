@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/jz_bottom_bg"
+        android:background="@drawable/bottom_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="invisible">
@@ -54,8 +54,8 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:paddingTop="8dp"
-            android:progressDrawable="@drawable/jz_bottom_seek_progress"
-            android:thumb="@drawable/jz_bottom_seek_thumb" />
+            android:progressDrawable="@drawable/bottom_seek_progress"
+            android:thumb="@drawable/bottom_seek_thumb" />
 
         <TextView
             android:id="@+id/total"
@@ -91,7 +91,7 @@
         android:layout_height="1.5dp"
         android:layout_alignParentBottom="true"
         android:max="100"
-        android:progressDrawable="@drawable/jz_bottom_progress" />
+        android:progressDrawable="@drawable/bottom_progress" />
 
     <ImageView
         android:id="@+id/back_tiny"

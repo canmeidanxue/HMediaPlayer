@@ -25,11 +25,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.bluesky.hmediaplayer.HMediaManager;
-import com.example.bluesky.hmediaplayer.HUserActionStandard;
-import com.example.bluesky.hmediaplayer.HUtils;
-import com.example.bluesky.hmediaplayer.HVideoPlayer;
-import com.example.bluesky.hmediaplayer.HVideoPlayerManager;
+import com.example.bluesky.hmediaplayer.MediaManager;
+import com.example.bluesky.hmediaplayer.UserActionStandard;
+import com.example.bluesky.hmediaplayer.Utils;
+import com.example.bluesky.hmediaplayer.VideoPlayer;
+import com.example.bluesky.hmediaplayer.VideoPlayerManager;
 import com.example.bluesky.hmediaplayer.R;
 
 import java.text.SimpleDateFormat;
@@ -42,7 +42,7 @@ import java.util.TimerTask;
  * Created by blue_sky on 2017/12/18.
  */
 
-public class MyHVideoPlayerStandard extends HVideoPlayer {
+public class MyHVideoPlayerStandard extends VideoPlayer {
     protected static Timer DISMISS_CONTROL_VIEW_TIMER;
 
     public ImageView backButton;
@@ -142,7 +142,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
             if (((LinkedHashMap) dataSourceObjects[0]).size() == 1) {
                 clarity.setVisibility(GONE);
             } else {
-                clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+                clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
                 clarity.setVisibility(View.VISIBLE);
             }
             changeStartButtonSize((int) getResources().getDimension(R.dimen.jz_start_button_w_h_fullscreen));
@@ -166,7 +166,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
 
         if (tmp_test_back) {
             tmp_test_back = false;
-            HVideoPlayerManager.setFirstFloor(this);
+            VideoPlayerManager.setFirstFloor(this);
             backPress();
         }
     }
@@ -248,7 +248,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
                         bottomProgressBar.setProgress(progress);
                     }
                     if (!mChangePosition && !mChangeVolume) {
-                        onEvent(HUserActionStandard.ON_CLICK_BLANK);
+                        onEvent(UserActionStandard.ON_CLICK_BLANK);
                         onClickUiToggle();
                     }
                     break;
@@ -271,18 +271,18 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
         super.onClick(v);
         int i = v.getId();
         if (i == R.id.thumb) {
-            if (dataSourceObjects == null || HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
+            if (dataSourceObjects == null || Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (currentState == CURRENT_STATE_NORMAL) {
-                if (!HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") &&
-                        !HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                        !HUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                    showWifiDialog(HUserActionStandard.ON_CLICK_START_THUMB);
+                if (!Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") &&
+                        !Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                        !Utils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                    showWifiDialog(UserActionStandard.ON_CLICK_START_THUMB);
                     return;
                 }
-                onEvent(HUserActionStandard.ON_CLICK_START_THUMB);
+                onEvent(UserActionStandard.ON_CLICK_START_THUMB);
                 startVideo();
             } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
                 onClickUiToggle();
@@ -292,7 +292,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
         } else if (i == R.id.back) {
             backPress();
         } else if (i == R.id.back_tiny) {
-            if (HVideoPlayerManager.getFirstFloor().currentScreen == HVideoPlayer.SCREEN_WINDOW_LIST) {
+            if (VideoPlayerManager.getFirstFloor().currentScreen == VideoPlayer.SCREEN_WINDOW_LIST) {
                 quitFullscreenOrTinyWindow();
             } else {
                 backPress();
@@ -306,7 +306,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
                 public void onClick(View v) {
                     int index = (int) v.getTag();
                     onStatePreparingChangingUrl(index, getCurrentPositionWhenPlaying());
-                    clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+                    clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
                     for (int j = 0; j < layout.getChildCount(); j++) {//设置点击之后的颜色
                         if (j == currentUrlMapIndex) {
                             ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
@@ -321,7 +321,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
             };
 
             for (int j = 0; j < ((LinkedHashMap) dataSourceObjects[0]).size(); j++) {
-                String key = HUtils.getKeyFromDataSource(dataSourceObjects, j);
+                String key = Utils.getKeyFromDataSource(dataSourceObjects, j);
                 TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.jz_layout_clarity_item, null);
                 clarityItem.setText(key);
                 clarityItem.setTag(j);
@@ -338,18 +338,18 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
             layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             clarityPopWindow.update(clarity, -40, 46, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
         } else if (i == R.id.retry_btn) {
-            if (!HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
-                    HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                    !HUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                showWifiDialog(HUserActionStandard.ON_CLICK_START_ICON);
+            if (!Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
+                    Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                    !Utils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                showWifiDialog(UserActionStandard.ON_CLICK_START_ICON);
                 return;
             }
             initTextureView();//和开始播放的代码重复
             addTextureView();
-            HMediaManager.setDataSource(dataSourceObjects);
-            HMediaManager.setCurrentDataSource(HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
+            MediaManager.setDataSource(dataSourceObjects);
+            MediaManager.setCurrentDataSource(Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
             onStatePreparing();
-            onEvent(HUserActionStandard.ON_CLICK_START_ERROR);
+            onEvent(UserActionStandard.ON_CLICK_START_ERROR);
         }
     }
 
@@ -362,7 +362,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                onEvent(HUserActionStandard.ON_CLICK_START_THUMB);
+                onEvent(UserActionStandard.ON_CLICK_START_THUMB);
                 startVideo();
                 WIFI_TIP_DIALOG_SHOWED = true;
             }
@@ -401,7 +401,7 @@ public class MyHVideoPlayerStandard extends HVideoPlayer {
     public void onClickUiToggle() {
         if (bottomContainer.getVisibility() != View.VISIBLE) {
             setSystemTimeAndBattery();
-            clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+            clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
         }
         if (currentState == CURRENT_STATE_PREPARING) {
             changeUiToPreparing();

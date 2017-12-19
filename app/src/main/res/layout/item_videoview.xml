@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.example.bluesky.hmediaplayer.HVideoPlayerStandard
+    <com.example.bluesky.hmediaplayer.VideoPlayerStandard
         android:id="@+id/videoplayer"
         android:layout_width="match_parent"
         android:layout_height="200dp" />

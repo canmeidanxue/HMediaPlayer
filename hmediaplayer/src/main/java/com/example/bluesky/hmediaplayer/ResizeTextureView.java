@@ -8,21 +8,22 @@ import android.view.View;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ * @author blue_sky
  */
 
-public class HResizeTextureView extends TextureView {
+public class ResizeTextureView extends TextureView {
     protected static final String TAG = "JZResizeTextureView";
 
     public int currentVideoWidth = 0;
     public int currentVideoHeight = 0;
 
-    public HResizeTextureView(Context context) {
+    public ResizeTextureView(Context context) {
         super(context);
         currentVideoWidth = 0;
         currentVideoHeight = 0;
     }
 
-    public HResizeTextureView(Context context, AttributeSet attrs) {
+    public ResizeTextureView(Context context, AttributeSet attrs) {
         super(context, attrs);
         currentVideoWidth = 0;
         currentVideoHeight = 0;
@@ -55,7 +56,7 @@ public class HResizeTextureView extends TextureView {
         int parentHeight = ((View) getParent()).getMeasuredHeight();
         int parentWidth = ((View) getParent()).getMeasuredWidth();
         if (parentWidth != 0 && parentHeight != 0 && videoWidth != 0 && videoHeight != 0) {
-            if (HVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE == HVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE_FILL_PARENT) {
+            if (VideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE == VideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE_FILL_PARENT) {
                 if (viewRotation == 90 || viewRotation == 270) {
                     int tempSize = parentWidth;
                     parentWidth = parentHeight;
@@ -132,11 +133,11 @@ public class HResizeTextureView extends TextureView {
             // no size yet, just adopt the given spec sizes
         }
         if (parentWidth != 0 && parentHeight != 0 && videoWidth != 0 && videoHeight != 0) {
-            if (HVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE == HVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL) {
+            if (VideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE == VideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL) {
                 /**原图**/
                 height = videoHeight;
                 width = videoWidth;
-            } else if (HVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE == HVideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE_FILL_SCROP) {
+            } else if (VideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE == VideoPlayer.VIDEO_IMAGE_DISPLAY_TYPE_FILL_SCROP) {
                 if (viewRotation == 90 || viewRotation == 270) {
                     int tempSize = parentWidth;
                     parentWidth = parentHeight;

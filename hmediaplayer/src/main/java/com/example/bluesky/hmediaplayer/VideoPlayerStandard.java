@@ -33,9 +33,10 @@ import java.util.TimerTask;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ * @author blue_sky
  */
 
-public class HVideoPlayerStandard extends HVideoPlayer {
+public class VideoPlayerStandard extends VideoPlayer {
     protected static Timer DISMISS_CONTROL_VIEW_TIMER;
 
     public ImageView backButton;
@@ -67,6 +68,7 @@ public class HVideoPlayerStandard extends HVideoPlayer {
     protected TextView mDialogBrightnessTextView;
     private boolean brocasting = false;
     private BroadcastReceiver battertReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
@@ -92,11 +94,11 @@ public class HVideoPlayerStandard extends HVideoPlayer {
         }
     };
 
-    public HVideoPlayerStandard(Context context) {
+    public VideoPlayerStandard(Context context) {
         super(context);
     }
 
-    public HVideoPlayerStandard(Context context, AttributeSet attrs) {
+    public VideoPlayerStandard(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -139,7 +141,7 @@ public class HVideoPlayerStandard extends HVideoPlayer {
             if (((LinkedHashMap) dataSourceObjects[0]).size() == 1) {
                 clarity.setVisibility(GONE);
             } else {
-                clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+                clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
                 clarity.setVisibility(View.VISIBLE);
             }
             changeStartButtonSize((int) getResources().getDimension(R.dimen.jz_start_button_w_h_fullscreen));
@@ -163,7 +165,7 @@ public class HVideoPlayerStandard extends HVideoPlayer {
 
         if (tmp_test_back) {
             tmp_test_back = false;
-            HVideoPlayerManager.setFirstFloor(this);
+            VideoPlayerManager.setFirstFloor(this);
             backPress();
         }
     }
@@ -245,9 +247,11 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                         bottomProgressBar.setProgress(progress);
                     }
                     if (!mChangePosition && !mChangeVolume) {
-                        onEvent(HUserActionStandard.ON_CLICK_BLANK);
+                        onEvent(UserActionStandard.ON_CLICK_BLANK);
                         onClickUiToggle();
                     }
+                    break;
+                default:
                     break;
             }
         } else if (id == R.id.bottom_seek_progress) {
@@ -257,6 +261,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                     break;
                 case MotionEvent.ACTION_UP:
                     startDismissControlViewTimer();
+                    break;
+                default:
                     break;
             }
         }
@@ -268,18 +274,18 @@ public class HVideoPlayerStandard extends HVideoPlayer {
         super.onClick(v);
         int i = v.getId();
         if (i == R.id.thumb) {
-            if (dataSourceObjects == null || HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
+            if (dataSourceObjects == null || Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (currentState == CURRENT_STATE_NORMAL) {
-                if (!HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") &&
-                        !HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                        !HUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                    showWifiDialog(HUserActionStandard.ON_CLICK_START_THUMB);
+                if (!Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") &&
+                        !Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                        !Utils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                    showWifiDialog(UserActionStandard.ON_CLICK_START_THUMB);
                     return;
                 }
-                onEvent(HUserActionStandard.ON_CLICK_START_THUMB);
+                onEvent(UserActionStandard.ON_CLICK_START_THUMB);
                 startVideo();
             } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
                 onClickUiToggle();
@@ -289,7 +295,7 @@ public class HVideoPlayerStandard extends HVideoPlayer {
         } else if (i == R.id.back) {
             backPress();
         } else if (i == R.id.back_tiny) {
-            if (HVideoPlayerManager.getFirstFloor().currentScreen == HVideoPlayer.SCREEN_WINDOW_LIST) {
+            if (VideoPlayerManager.getFirstFloor().currentScreen == VideoPlayer.SCREEN_WINDOW_LIST) {
                 quitFullscreenOrTinyWindow();
             } else {
                 backPress();
@@ -304,8 +310,11 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 public void onClick(View v) {
                     int index = (int) v.getTag();
                     onStatePreparingChangingUrl(index, getCurrentPositionWhenPlaying());
-                    clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
-                    for (int j = 0; j < layout.getChildCount(); j++) {//设置点击之后的颜色
+                    clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+                    /**
+                     * //设置点击之后的颜色
+                     */
+                    for (int j = 0; j < layout.getChildCount(); j++) {
                         if (j == currentUrlMapIndex) {
                             ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
                         } else {
@@ -319,7 +328,7 @@ public class HVideoPlayerStandard extends HVideoPlayer {
             };
 
             for (int j = 0; j < ((LinkedHashMap) dataSourceObjects[0]).size(); j++) {
-                String key = HUtils.getKeyFromDataSource(dataSourceObjects, j);
+                String key = Utils.getKeyFromDataSource(dataSourceObjects, j);
                 TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.jz_layout_clarity_item, null);
                 clarityItem.setText(key);
                 clarityItem.setTag(j);
@@ -336,18 +345,18 @@ public class HVideoPlayerStandard extends HVideoPlayer {
             layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             clarityPopWindow.update(clarity, -40, 46, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
         } else if (i == R.id.retry_btn) {
-            if (!HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
-                    HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
-                    !HUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
-                showWifiDialog(HUserAction.ON_CLICK_START_ICON);
+            if (!Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
+                    Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
+                    !Utils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
+                showWifiDialog(UserAction.ON_CLICK_START_ICON);
                 return;
             }
             initTextureView();//和开始播放的代码重复
             addTextureView();
-            HMediaManager.setDataSource(dataSourceObjects);
-            HMediaManager.setCurrentDataSource(HUtils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
+            MediaManager.setDataSource(dataSourceObjects);
+            MediaManager.setCurrentDataSource(Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
             onStatePreparing();
-            onEvent(HUserAction.ON_CLICK_START_ERROR);
+            onEvent(UserAction.ON_CLICK_START_ERROR);
         }
     }
 
@@ -360,7 +369,7 @@ public class HVideoPlayerStandard extends HVideoPlayer {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                onEvent(HUserActionStandard.ON_CLICK_START_THUMB);
+                onEvent(UserActionStandard.ON_CLICK_START_THUMB);
                 startVideo();
                 WIFI_TIP_DIALOG_SHOWED = true;
             }
@@ -399,7 +408,7 @@ public class HVideoPlayerStandard extends HVideoPlayer {
     public void onClickUiToggle() {
         if (bottomContainer.getVisibility() != View.VISIBLE) {
             setSystemTimeAndBattery();
-            clarity.setText(HUtils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+            clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
         }
         if (currentState == CURRENT_STATE_PREPARING) {
             changeUiToPreparing();
@@ -469,7 +478,9 @@ public class HVideoPlayerStandard extends HVideoPlayer {
     @Override
     public void setBufferProgress(int bufferProgress) {
         super.setBufferProgress(bufferProgress);
-        if (bufferProgress != 0) bottomProgressBar.setSecondaryProgress(bufferProgress);
+        if (bufferProgress != 0) {
+            bottomProgressBar.setSecondaryProgress(bufferProgress);
+        }
     }
 
     @Override
@@ -494,6 +505,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
     }
 
@@ -512,6 +525,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
 
     }
@@ -531,6 +546,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
 
     }
@@ -548,6 +565,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
 
     }
@@ -567,6 +586,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
     }
 
@@ -583,6 +604,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
 
     }
@@ -602,6 +625,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
 
     }
@@ -621,6 +646,8 @@ public class HVideoPlayerStandard extends HVideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
+                default:
+                    break;
         }
 
     }

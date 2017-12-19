@@ -9,9 +9,10 @@ import java.util.Map;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ * @author blue_sky
  */
 
-public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener{
+public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnVideoSizeChangedListener{
     public MediaPlayer mediaPlayer;
 
     @Override
@@ -27,14 +28,14 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
             if (dataSourceObjects.length > 1) {
                 mediaPlayer.setLooping((boolean) dataSourceObjects[1]);
             }
-            mediaPlayer.setOnPreparedListener(HMediaSystem.this);
-            mediaPlayer.setOnCompletionListener(HMediaSystem.this);
-            mediaPlayer.setOnBufferingUpdateListener(HMediaSystem.this);
+            mediaPlayer.setOnPreparedListener(MediaSystem.this);
+            mediaPlayer.setOnCompletionListener(MediaSystem.this);
+            mediaPlayer.setOnBufferingUpdateListener(MediaSystem.this);
             mediaPlayer.setScreenOnWhilePlaying(true);
-            mediaPlayer.setOnSeekCompleteListener(HMediaSystem.this);
-            mediaPlayer.setOnErrorListener(HMediaSystem.this);
-            mediaPlayer.setOnInfoListener(HMediaSystem.this);
-            mediaPlayer.setOnVideoSizeChangedListener(HMediaSystem.this);
+            mediaPlayer.setOnSeekCompleteListener(MediaSystem.this);
+            mediaPlayer.setOnErrorListener(MediaSystem.this);
+            mediaPlayer.setOnInfoListener(MediaSystem.this);
+            mediaPlayer.setOnVideoSizeChangedListener(MediaSystem.this);
             Class<MediaPlayer> clazz = MediaPlayer.class;
             Method method = clazz.getDeclaredMethod("setDataSource", String.class, Map.class);
             if (dataSourceObjects.length > 2) {
@@ -88,11 +89,11 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
     public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
         if (currentDataSource.toString().toLowerCase().contains("mp3")) {
-            HMediaManager.instance().mainThreadHandler.post(new Runnable() {
+            MediaManager.instance().mainThreadHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (HVideoPlayerManager.getCurrentJzvd() != null) {
-                        HVideoPlayerManager.getCurrentJzvd().onPrepared();
+                    if (VideoPlayerManager.getCurrentJzvd() != null) {
+                        VideoPlayerManager.getCurrentJzvd().onPrepared();
                     }
                 }
             });
@@ -101,11 +102,11 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (HVideoPlayerManager.getCurrentJzvd() != null) {
-                    HVideoPlayerManager.getCurrentJzvd().onAutoCompletion();
+                if (VideoPlayerManager.getCurrentJzvd() != null) {
+                    VideoPlayerManager.getCurrentJzvd().onAutoCompletion();
                 }
             }
         });
@@ -113,11 +114,11 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
 
     @Override
     public void onBufferingUpdate(MediaPlayer mediaPlayer, final int percent) {
-        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (HVideoPlayerManager.getCurrentJzvd() != null) {
-                    HVideoPlayerManager.getCurrentJzvd().setBufferProgress(percent);
+                if (VideoPlayerManager.getCurrentJzvd() != null) {
+                    VideoPlayerManager.getCurrentJzvd().setBufferProgress(percent);
                 }
             }
         });
@@ -125,11 +126,11 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
 
     @Override
     public void onSeekComplete(MediaPlayer mediaPlayer) {
-        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (HVideoPlayerManager.getCurrentJzvd() != null) {
-                    HVideoPlayerManager.getCurrentJzvd().onSeekComplete();
+                if (VideoPlayerManager.getCurrentJzvd() != null) {
+                    VideoPlayerManager.getCurrentJzvd().onSeekComplete();
                 }
             }
         });
@@ -137,11 +138,11 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, final int what, final int extra) {
-        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (HVideoPlayerManager.getCurrentJzvd() != null) {
-                    HVideoPlayerManager.getCurrentJzvd().onError(what, extra);
+                if (VideoPlayerManager.getCurrentJzvd() != null) {
+                    VideoPlayerManager.getCurrentJzvd().onError(what, extra);
                 }
             }
         });
@@ -150,14 +151,14 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
 
     @Override
     public boolean onInfo(MediaPlayer mediaPlayer, final int what, final int extra) {
-        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (HVideoPlayerManager.getCurrentJzvd() != null) {
+                if (VideoPlayerManager.getCurrentJzvd() != null) {
                     if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                        HVideoPlayerManager.getCurrentJzvd().onPrepared();
+                        VideoPlayerManager.getCurrentJzvd().onPrepared();
                     } else {
-                        HVideoPlayerManager.getCurrentJzvd().onInfo(what, extra);
+                        VideoPlayerManager.getCurrentJzvd().onInfo(what, extra);
                     }
                 }
             }
@@ -167,13 +168,13 @@ public class HMediaSystem extends HMediaInterface implements MediaPlayer.OnPrepa
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mediaPlayer, int width, int height) {
-        HMediaManager.instance().currentVideoWidth = width;
-        HMediaManager.instance().currentVideoHeight = height;
-        HMediaManager.instance().mainThreadHandler.post(new Runnable() {
+        MediaManager.instance().currentVideoWidth = width;
+        MediaManager.instance().currentVideoHeight = height;
+        MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (HVideoPlayerManager.getCurrentJzvd() != null) {
-                    HVideoPlayerManager.getCurrentJzvd().onVideoSizeChanged();
+                if (VideoPlayerManager.getCurrentJzvd() != null) {
+                    VideoPlayerManager.getCurrentJzvd().onVideoSizeChanged();
                 }
             }
         });

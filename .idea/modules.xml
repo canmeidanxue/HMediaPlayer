@@ -3,11 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/HMediaPlayer.iml" filepath="$PROJECT_DIR$/.idea/HMediaPlayer.iml" />
-      <module fileurl="file://D:\MyWorkSpace\HMediaPlayer\HMediaPlayer.iml" filepath="D:\MyWorkSpace\HMediaPlayer\HMediaPlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://D:\MyWorkSpace\HMediaPlayer\app\app.iml" filepath="D:\MyWorkSpace\HMediaPlayer\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hmediaplayer/hmediaplayer.iml" filepath="$PROJECT_DIR$/hmediaplayer/hmediaplayer.iml" />
-      <module fileurl="file://D:\MyWorkSpace\HMediaPlayer\hmediaplayer\hmediaplayer.iml" filepath="D:\MyWorkSpace\HMediaPlayer\hmediaplayer\hmediaplayer.iml" />
     </modules>
   </component>
 </project>
