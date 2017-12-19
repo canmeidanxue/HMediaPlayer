@@ -9,9 +9,10 @@ import com.example.bluesky.hmediaplayer.R;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ * @author blue_sky
  */
 
-public class CustomVideoPlayer extends MyHVideoPlayerStandard {
+public class CustomVideoPlayer extends MyVideoPlayerStandard {
     public CustomVideoPlayer(Context context) {
         super(context);
     }

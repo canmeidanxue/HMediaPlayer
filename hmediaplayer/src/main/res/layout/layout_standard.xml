@@ -81,7 +81,7 @@
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
             android:scaleType="centerInside"
-            android:src="@drawable/jz_enlarge" />
+            android:src="@drawable/enlarge" />
     </LinearLayout>
 
     <ProgressBar
@@ -99,7 +99,7 @@
         android:layout_height="24dp"
         android:layout_marginLeft="6dp"
         android:layout_marginTop="6dp"
-        android:background="@drawable/jz_click_back_tiny_selector"
+        android:background="@drawable/click_back_tiny_selector"
         android:visibility="gone" />
 
     <RelativeLayout
@@ -109,7 +109,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/jz_title_bg"
+        android:background="@drawable/title_bg"
         android:gravity="center_vertical">
 
         <ImageView
@@ -122,7 +122,7 @@
             android:paddingLeft="12dp"
             android:paddingStart="12dp"
             android:scaleType="centerInside"
-            android:src="@drawable/jz_click_back_selector" />
+            android:src="@drawable/click_back_selector" />
 
         <TextView
             android:id="@+id/title"
@@ -158,7 +158,7 @@
                 android:layout_width="23dp"
                 android:layout_height="10dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/jz_battery_level_10" />
+                android:background="@drawable/battery_level_10" />
 
             <TextView
                 android:id="@+id/video_current_time"
@@ -178,7 +178,7 @@
         android:layout_height="@dimen/jz_start_button_w_h_normal"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:indeterminateDrawable="@drawable/jz_loading"
+        android:indeterminateDrawable="@drawable/loading"
         android:visibility="invisible" />
 
     <LinearLayout
@@ -193,7 +193,7 @@
             android:id="@+id/start"
             android:layout_width="@dimen/jz_start_button_w_h_normal"
             android:layout_height="@dimen/jz_start_button_w_h_normal"
-            android:src="@drawable/jz_click_play_selector" />
+            android:src="@drawable/click_play_selector" />
     </LinearLayout>
 
 

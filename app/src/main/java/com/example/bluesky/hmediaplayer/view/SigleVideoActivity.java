@@ -11,6 +11,9 @@ import com.example.bluesky.hmediaplayer.R;
 import com.example.bluesky.hmediaplayer.player.CustomVideoPlayer;
 import com.squareup.picasso.Picasso;
 
+/**
+ * @author 037
+ */
 public class SigleVideoActivity extends AppCompatActivity {
     private CustomVideoPlayer customVideoPlayer;
     @Override
@@ -19,13 +22,29 @@ public class SigleVideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sigle_video);
         customVideoPlayer = findViewById(R.id.singleHVideo);
         customVideoPlayer.setUp("http://jzvd.nathen.cn/342a5f7ef6124a4a8faf00e738b8bee4/cf6d9db0bd4d41f59d09ea0a81e918fd-5287d2089db37e62345123a1be272f8b.mp4"
-                , customVideoPlayer.SCREEN_WINDOW_NORMAL, "我是一个好人");
+                , VideoPlayer.SCREEN_WINDOW_NORMAL, "我是一个好人");
         Picasso.with(this)
                 .load("http://jzvd-pic.nathen.cn/jzvd-pic/1bb2ebbe-140d-4e2e-abd2-9e7e564f71ac.png")
                 .into(customVideoPlayer.thumbImageView);
 
         VideoPlayer.setHUserAction(new MyUserActionStandard());
     }
+
+    @Override
+    public void onBackPressed() {
+        if (VideoPlayer.backPress()) {
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        VideoPlayer.releaseAllVideos();
+    }
+
     class MyUserActionStandard implements UserActionStandard {
 
         @Override

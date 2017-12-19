@@ -8,4 +8,19 @@
         android:id="@+id/videoplayer"
         android:layout_width="match_parent"
         android:layout_height="200dp" />
+    <LinearLayout
+        android:id="@+id/llDetail"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:background="@mipmap/ic_launcher_round"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:text="曾经沧海难为水，出去巫山不是云"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </LinearLayout>

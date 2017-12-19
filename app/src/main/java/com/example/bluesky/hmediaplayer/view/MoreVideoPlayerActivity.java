@@ -11,9 +11,17 @@ import com.example.bluesky.hmediaplayer.MediaManager;
 import com.example.bluesky.hmediaplayer.Utils;
 import com.example.bluesky.hmediaplayer.VideoPlayer;
 import com.example.bluesky.hmediaplayer.R;
+import com.example.bluesky.hmediaplayer.modle.VideoConstant;
+import com.example.bluesky.hmediaplayer.modle.VideoInfo;
 import com.example.bluesky.hmediaplayer.view.adapter.AdapterRecyclerViewVideo;
 
-public class MoreVideoPlayerActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author 037
+ */
+public class MoreVideoPlayerActivity extends AppCompatActivity implements AdapterRecyclerViewVideo.OnItemClick{
     RecyclerView recyclerView;
     AdapterRecyclerViewVideo adapterRecyclerViewVideo;
 
@@ -25,13 +33,20 @@ public class MoreVideoPlayerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayUseLogoEnabled(false);
-        getSupportActionBar().setTitle("RecyclerView");
         setContentView(R.layout.activity_more_video_player);
 
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//
+        List<VideoInfo> videoInfos = new ArrayList<>();
+        for (int i= 0;i< VideoConstant.videoUrls.length;i++){
+            VideoInfo videoInfo = new VideoInfo();
+            videoInfo.setUrl(VideoConstant.videoUrlList[i]);
+            videoInfo.setTitle(VideoConstant.videoTitle[i]);
+            videoInfo.setUrl(VideoConstant.videoImg[i]);
+        }
         adapterRecyclerViewVideo = new AdapterRecyclerViewVideo(this);
+        adapterRecyclerViewVideo.setDataChange(videoInfos);
+        adapterRecyclerViewVideo.setItemClick(this);
         recyclerView.setAdapter(adapterRecyclerViewVideo);
         recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
             @Override
@@ -71,4 +86,8 @@ public class MoreVideoPlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void itemTouch() {
+
+    }
 }

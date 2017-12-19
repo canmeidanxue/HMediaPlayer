@@ -8,5 +8,5 @@
     <com.example.bluesky.hmediaplayer.player.CustomVideoPlayer
         android:id="@+id/singleHVideo"
         android:layout_width="wrap_content"
-        android:layout_height="500dp"/>
+        android:layout_height="200dp"/>
 </RelativeLayout>
