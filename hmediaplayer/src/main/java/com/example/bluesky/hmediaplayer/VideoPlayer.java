@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -41,20 +42,65 @@ import java.util.TimerTask;
 
 public abstract class VideoPlayer extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener {
     public static final String TAG = "HVideoPlayer";
+    /**
+     * 最小滑动距离, 防止触碰到屏幕时弹出dialog
+     */
     public static final int THRESHOLD = 80;
+    /**
+     * 更新时间和进度handler
+     */
+    private MyHandler myHandler = new MyHandler();
+    /**
+     * 更新时间和进度handler delley值
+     */
     public static final int FULL_SCREEN_NORMAL_DELAY = 300;
-
+    /**
+     * 更新时间和进度handler  what值
+     */
+    private static final int WHAT_EXTRA = 1002;
+    /**
+     * 正常窗口标记
+     */
     public static final int SCREEN_WINDOW_NORMAL = 0;
+    /**
+     * 集合显示是窗口标记
+     */
     public static final int SCREEN_WINDOW_LIST = 1;
+    /**
+     * 全屏显示窗口标记
+     */
     public static final int SCREEN_WINDOW_FULLSCREEN = 2;
+    /**
+     * 小窗口显示标记
+     */
     public static final int SCREEN_WINDOW_TINY = 3;
-
+    /**
+     * 当前显示窗口状态为正常标记
+     */
     public static final int CURRENT_STATE_NORMAL = 0;
+    /**
+     * 当前显示窗口状态为准备标记
+     */
     public static final int CURRENT_STATE_PREPARING = 1;
+    /**
+     * 当前显示窗口状态为切换视频源标记
+     */
     public static final int CURRENT_STATE_PREPARING_CHANGING_URL = 2;
+    /**
+     * 当前显示窗口状态为播放标记
+     */
     public static final int CURRENT_STATE_PLAYING = 3;
+    /**
+     * 当前显示窗口状态为暂停标记
+     */
     public static final int CURRENT_STATE_PAUSE = 5;
+    /**
+     * 当前显示窗口状态为播放完成标记
+     */
     public static final int CURRENT_STATE_AUTO_COMPLETE = 6;
+    /**
+     * 当前显示窗口状态为播放出现错误标记
+     */
     public static final int CURRENT_STATE_ERROR = 7;
 
     /**
@@ -65,20 +111,146 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
      * default
      */
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_ADAPTER = 0;
+    /**
+     * 视频封面显示标记
+     */
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_FILL_PARENT = 1;
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_FILL_SCROP = 2;
     public static final int VIDEO_IMAGE_DISPLAY_TYPE_ORIGINAL = 3;
+    /**
+     * 是否显示action_bar, 默认是不显示
+     */
     public static boolean ACTION_BAR_EXIST = true;
+    /**
+     * 是否显示tool_bar, 默认是不显示
+     */
     public static boolean TOOL_BAR_EXIST = true;
+    /**
+     * 全屏显示
+     */
     public static int FULLSCREEN_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_SENSOR;
+    /**
+     * 竖屏显示
+     */
     public static int NORMAL_ORIENTATION = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+    /**
+     * 是否保存进度 默认是保存进度
+     */
     public static boolean SAVE_PROGRESS = true;
+    /**
+     * 是否显示提示wifi是否连接, 默认是不出现
+     */
     public static boolean WIFI_TIP_DIALOG_SHOWED = false;
+    /**
+     * 默认的视频封面显示type
+     */
     public static int VIDEO_IMAGE_DISPLAY_TYPE = 0;
+    /**
+     * 点击退出全屏按钮标记
+     */
     public static long CLICK_QUIT_FULLSCREEN_TIME = 0;
+    /**
+     * 记录上一次退出全屏的时间
+     */
     public static long lastAutoFullscreenTime = 0;
     /**
-     * 是否新建个class，代码更规矩，并且变量的位置也很尴尬
+     *
+     */
+    protected static UserAction USER_EVENT;
+    /**
+     * 记录当前播放状态
+     */
+    public int currentState = -1;
+    /**
+     * 记录当前播放窗口状态
+     */
+    public int currentScreen = -1;
+
+    public Object[] objects = null;
+    /**
+     * seek 滑动位置
+     */
+    public long seekToInAdvance = 0;
+    /**
+     * 开始按钮
+     */
+    public ImageView startButton;
+    /**
+     * 播放进度条
+     */
+    public SeekBar progressBar;
+    /**
+     * 全屏按钮
+     */
+    public ImageView fullscreenButton;
+    /**
+     * 播放时间显示
+     */
+    public TextView currentTimeTextView, totalTimeTextView;
+    /**
+     * textureView渲染
+     */
+    public ViewGroup textureViewContainer;
+    /**
+     * 顶部与底部显示容器
+     */
+    public ViewGroup topContainer, bottomContainer;
+    /**
+     * 播放窗口宽度
+     */
+    public int widthRatio = 0;
+    /**
+     * 播放窗口高度
+     */
+    public int heightRatio = 0;
+    /**
+     * 这个参数原封不动直接通过MediaManager传给BaseMediaInterface。
+     */
+    public Object[] dataSourceObjects;
+    public int currentUrlMapIndex = 0;
+    public int positionInList = -1;
+    public int videoRotation = 0;
+    /**
+     * 屏幕大小
+     */
+    protected int mScreenWidth;
+    protected int mScreenHeight;
+    /**
+     * 视频管理类
+     */
+    protected AudioManager mAudioManager;
+    protected Handler mHandler;
+    /**
+     * 是否正在拖动weekbar
+     */
+    protected boolean mTouchingProgressBar;
+    /**
+     * 点击位置x,y值
+     */
+    protected float mDownX;
+    protected float mDownY;
+    /**
+     * 手势控制
+     */
+    protected boolean mChangeVolume;
+    protected boolean mChangePosition;
+    protected boolean mChangeBrightness;
+    /**
+     * 手势控制位置
+     */
+    protected long mGestureDownPosition;
+    protected int mGestureDownVolume;
+    protected float mGestureDownBrightness;
+    /**
+     * seekbar拖动位置保存
+     */
+    protected long mSeekTimePosition;
+    /**
+     * 是否直接返回
+     */
+    public boolean tmp_test_back = false;
+    /**
+     * 播放窗口管理类
      */
     public static AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
@@ -92,8 +264,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
                     try {
-                        if (//MediaManager.instance().mediaPlayer != null &&
-                                MediaManager.isPlaying()) {
+                        if (MediaManager.isPlaying()) {
                             MediaManager.pause();
                         }
                     } catch (IllegalStateException e) {
@@ -108,43 +279,6 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
             }
         }
     };
-    protected static UserAction JZ_USER_EVENT;
-    protected static Timer UPDATE_PROGRESS_TIMER;
-    public int currentState = -1;
-    public int currentScreen = -1;
-    public Object[] objects = null;
-    public long seekToInAdvance = 0;
-    public ImageView startButton;
-    public SeekBar progressBar;
-    public ImageView fullscreenButton;
-    public TextView currentTimeTextView, totalTimeTextView;
-    public ViewGroup textureViewContainer;
-    public ViewGroup topContainer, bottomContainer;
-    public int widthRatio = 0;
-    public int heightRatio = 0;
-    /**
-     * 这个参数原封不动直接通过MediaManager传给BaseMediaInterface。
-     */
-    public Object[] dataSourceObjects;
-    public int currentUrlMapIndex = 0;
-    public int positionInList = -1;
-    public int videoRotation = 0;
-    protected int mScreenWidth;
-    protected int mScreenHeight;
-    protected AudioManager mAudioManager;
-    protected Handler mHandler;
-    protected ProgressTimerTask mProgressTimerTask;
-    protected boolean mTouchingProgressBar;
-    protected float mDownX;
-    protected float mDownY;
-    protected boolean mChangeVolume;
-    protected boolean mChangePosition;
-    protected boolean mChangeBrightness;
-    protected long mGestureDownPosition;
-    protected int mGestureDownVolume;
-    protected float mGestureDownBrightness;
-    protected long mSeekTimePosition;
-    public boolean tmp_test_back = false;
 
     public VideoPlayer(Context context) {
         super(context);
@@ -205,6 +339,10 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
             return false;
         }
 
+        boolean isQuitFullscreen = VideoPlayerManager.getFirstFloor() != null &&
+                (VideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN ||
+                        VideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_TINY);
+
         if (VideoPlayerManager.getSecondFloor() != null) {
             CLICK_QUIT_FULLSCREEN_TIME = System.currentTimeMillis();
             if (Utils.dataSourceObjectsContainsUri(VideoPlayerManager.getFirstFloor().dataSourceObjects, MediaManager.getCurrentDataSource())) {
@@ -217,9 +355,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                 quitFullscreenOrTinyWindow();
             }
             return true;
-        } else if (VideoPlayerManager.getFirstFloor() != null &&
-                (VideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_FULLSCREEN ||
-                        VideoPlayerManager.getFirstFloor().currentScreen == SCREEN_WINDOW_TINY)) {//以前我总想把这两个判断写到一起，这分明是两个独立是逻辑
+        } else if (isQuitFullscreen) {
             CLICK_QUIT_FULLSCREEN_TIME = System.currentTimeMillis();
             quitFullscreenOrTinyWindow();
             return true;
@@ -268,7 +404,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
     }
 
     public static void setHUserAction(UserAction jzUserEvent) {
-        JZ_USER_EVENT = jzUserEvent;
+        USER_EVENT = jzUserEvent;
     }
 
     public static void goOnPlayOnResume() {
@@ -413,7 +549,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                 Utils.getCurrentFromDataSource(this.dataSourceObjects, currentUrlMapIndex).equals(Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex))) {
             return;
         }
-        if (isCurrentJZVD() && Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
+        if (isCurrentPlayer() && Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
             long position = 0;
             try {
                 position = MediaManager.getCurrentPosition();
@@ -424,15 +560,15 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                 Utils.saveProgress(getContext(), MediaManager.getCurrentDataSource(), position);
             }
             MediaManager.instance().releaseMediaPlayer();
-        } else if (isCurrentJZVD() && !Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
+        } else if (isCurrentPlayer() && !Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
             startWindowTiny();
-        } else if (!isCurrentJZVD() && Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
+        } else if (!isCurrentPlayer() && Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
             if (VideoPlayerManager.getCurrentHvd() != null &&
                     VideoPlayerManager.getCurrentHvd().currentScreen == VideoPlayer.SCREEN_WINDOW_TINY) {
                 //需要退出小窗退到我这里，我这里是第一层级
                 tmp_test_back = true;
             }
-        } else if (!isCurrentJZVD() && !Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
+        } else if (!isCurrentPlayer() && !Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource())) {
         }
         this.dataSourceObjects = dataSourceObjects;
         this.currentUrlMapIndex = defaultUrlMapIndex;
@@ -885,17 +1021,12 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
     public void startProgressTimer() {
         Log.i(TAG, "startProgressTimer: " + " [" + this.hashCode() + "] ");
         cancelProgressTimer();
-        UPDATE_PROGRESS_TIMER = new Timer();
-        mProgressTimerTask = new ProgressTimerTask();
-        UPDATE_PROGRESS_TIMER.schedule(mProgressTimerTask, 0, 300);
+        myHandler.sendEmptyMessageDelayed(WHAT_EXTRA, FULL_SCREEN_NORMAL_DELAY);
     }
 
     public void cancelProgressTimer() {
-        if (UPDATE_PROGRESS_TIMER != null) {
-            UPDATE_PROGRESS_TIMER.cancel();
-        }
-        if (mProgressTimerTask != null) {
-            mProgressTimerTask.cancel();
+        if (myHandler != null) {
+            myHandler.removeMessages(WHAT_EXTRA);
         }
     }
 
@@ -926,8 +1057,6 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
 
     public long getCurrentPositionWhenPlaying() {
         long position = 0;
-//        if (MediaManager.instance().mediaPlayer == null)
-//            return position;//这行代码不应该在这，如果代码和逻辑万无一失的话，心头之恨呐
         if (currentState == CURRENT_STATE_PLAYING ||
                 currentState == CURRENT_STATE_PAUSE) {
             try {
@@ -1001,20 +1130,20 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
         textureViewContainer.removeView(MediaManager.textureView);
         try {
             Constructor<VideoPlayer> constructor = (Constructor<VideoPlayer>) VideoPlayer.this.getClass().getConstructor(Context.class);
-            VideoPlayer jzVideoPlayer = constructor.newInstance(getContext());
-            jzVideoPlayer.setId(R.id.jz_fullscreen_id);
+            VideoPlayer videoPlayer = constructor.newInstance(getContext());
+            videoPlayer.setId(R.id.jz_fullscreen_id);
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            vp.addView(jzVideoPlayer, lp);
-            jzVideoPlayer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            vp.addView(videoPlayer, lp);
+            videoPlayer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
-            jzVideoPlayer.setUp(dataSourceObjects, currentUrlMapIndex, VideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN, objects);
-            jzVideoPlayer.setState(currentState);
-            jzVideoPlayer.addTextureView();
-            VideoPlayerManager.setSecondFloor(jzVideoPlayer);
+            videoPlayer.setUp(dataSourceObjects, currentUrlMapIndex, VideoPlayerStandard.SCREEN_WINDOW_FULLSCREEN, objects);
+            videoPlayer.setState(currentState);
+            videoPlayer.addTextureView();
+            VideoPlayerManager.setSecondFloor(videoPlayer);
             onStateNormal();
-            jzVideoPlayer.progressBar.setSecondaryProgress(progressBar.getSecondaryProgress());
-            jzVideoPlayer.startProgressTimer();
+            videoPlayer.progressBar.setSecondaryProgress(progressBar.getSecondaryProgress());
+            videoPlayer.startProgressTimer();
             CLICK_QUIT_FULLSCREEN_TIME = System.currentTimeMillis();
         } catch (Exception e) {
             e.printStackTrace();
@@ -1024,10 +1153,11 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
     public void startWindowTiny() {
         Log.i(TAG, "startWindowTiny " + " [" + this.hashCode() + "] ");
         onEvent(UserAction.ON_ENTER_TINYSCREEN);
-        if (currentState == CURRENT_STATE_NORMAL || currentState == CURRENT_STATE_ERROR || currentState == CURRENT_STATE_AUTO_COMPLETE)
+        if (currentState == CURRENT_STATE_NORMAL || currentState == CURRENT_STATE_ERROR
+                || currentState == CURRENT_STATE_AUTO_COMPLETE) {
             return;
-        ViewGroup vp = (Utils.scanForActivity(getContext()))
-                .findViewById(Window.ID_ANDROID_CONTENT);
+        }
+        ViewGroup vp = (Utils.scanForActivity(getContext())).findViewById(Window.ID_ANDROID_CONTENT);
         View old = vp.findViewById(R.id.jz_tiny_id);
         if (old != null) {
             vp.removeView(old);
@@ -1057,11 +1187,11 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
         /**
          * 不仅正在播放的url不能一样，并且各个清晰度也不能一样
          */
-        return isCurrentJZVD()
-                && Utils.dataSourceObjectsContainsUri(dataSourceObjects, MediaManager.getCurrentDataSource());
+        return isCurrentPlayer() && Utils.dataSourceObjectsContainsUri(dataSourceObjects,
+                MediaManager.getCurrentDataSource());
     }
 
-    public boolean isCurrentJZVD() {
+    public boolean isCurrentPlayer() {
         return VideoPlayerManager.getCurrentHvd() != null
                 && VideoPlayerManager.getCurrentHvd() == this;
     }
@@ -1098,6 +1228,9 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
         }
     }
 
+    /**
+     * 播放完成后自动退出全屏
+     */
     public void autoQuitFullscreen() {
         if ((System.currentTimeMillis() - lastAutoFullscreenTime) > 2000
                 && isCurrentPlay()
@@ -1109,8 +1242,8 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
     }
 
     public void onEvent(int type) {
-        if (JZ_USER_EVENT != null && isCurrentPlay() && dataSourceObjects != null) {
-            JZ_USER_EVENT.onEvent(type, Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), currentScreen, objects);
+        if (USER_EVENT != null && isCurrentPlay() && dataSourceObjects != null) {
+            USER_EVENT.onEvent(type, Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex), currentScreen, objects);
         }
     }
 
@@ -1157,7 +1290,8 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
             float y = event.values[SensorManager.DATA_Y];
             float z = event.values[SensorManager.DATA_Z];
             //过滤掉用力过猛会有一个反向的大数值
-            if (((x > -15 && x < -10) || (x < 15 && x > 10)) && Math.abs(y) < 1.5) {
+            boolean isResult = ((x > -15 && x < -10) || (x < 15 && x > 10)) && Math.abs(y) < 1.5;
+            if (isResult) {
                 if ((System.currentTimeMillis() - lastAutoFullscreenTime) > 2000) {
                     if (VideoPlayerManager.getCurrentHvd() != null) {
                         VideoPlayerManager.getCurrentHvd().autoFullscreen(x);
@@ -1172,19 +1306,18 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
         }
     }
 
-    public class ProgressTimerTask extends TimerTask {
+    public class MyHandler extends Handler {
         @Override
-        public void run() {
-            if (currentState == CURRENT_STATE_PLAYING || currentState == CURRENT_STATE_PAUSE) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        long position = getCurrentPositionWhenPlaying();
-                        long duration = getDuration();
-                        int progress = (int) (position * 100 / (duration == 0 ? 1 : duration));
-                        setProgressAndText(progress, position, duration);
-                    }
-                });
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == WHAT_EXTRA) {
+                if (currentState == CURRENT_STATE_PLAYING || currentState == CURRENT_STATE_PAUSE) {
+                    long position = getCurrentPositionWhenPlaying();
+                    long duration = getDuration();
+                    int progress = (int) (position * 100 / (duration == 0 ? 1 : duration));
+                    setProgressAndText(progress, position, duration);
+                    sendEmptyMessageDelayed(WHAT_EXTRA, FULL_SCREEN_NORMAL_DELAY);
+                }
             }
         }
     }
