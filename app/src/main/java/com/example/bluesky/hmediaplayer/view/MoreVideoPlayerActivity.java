@@ -43,6 +43,7 @@ public class MoreVideoPlayerActivity extends AppCompatActivity implements Adapte
             videoInfo.setUrl(VideoConstant.videoUrlList[i]);
             videoInfo.setTitle(VideoConstant.videoTitle[i]);
             videoInfo.setUrl(VideoConstant.videoImg[i]);
+            videoInfos.add(videoInfo);
         }
         adapterRecyclerViewVideo = new AdapterRecyclerViewVideo(this);
         adapterRecyclerViewVideo.setDataChange(videoInfos);
