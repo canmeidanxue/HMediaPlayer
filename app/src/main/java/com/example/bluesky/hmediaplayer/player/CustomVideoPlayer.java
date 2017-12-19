@@ -6,13 +6,14 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.bluesky.hmediaplayer.R;
+import com.example.bluesky.hmediaplayer.VideoPlayerStandard;
 
 /**
  * Created by blue_sky on 2017/12/18.
  * @author blue_sky
  */
 
-public class CustomVideoPlayer extends MyVideoPlayerStandard {
+public class CustomVideoPlayer extends VideoPlayerStandard {
     public CustomVideoPlayer(Context context) {
         super(context);
     }

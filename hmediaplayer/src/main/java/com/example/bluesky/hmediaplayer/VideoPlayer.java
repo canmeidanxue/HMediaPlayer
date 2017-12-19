@@ -216,9 +216,9 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
     protected int mScreenWidth;
     protected int mScreenHeight;
     /**
-     * 视频管理类
+     * 音视频管理类
      */
-    protected AudioManager mAudioManager;
+    public AudioManager mAudioManager;
     protected Handler mHandler;
     /**
      * 是否正在拖动weekbar

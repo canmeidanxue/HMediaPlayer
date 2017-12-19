@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -70,20 +71,34 @@ public class VideoPlayerStandard extends VideoPlayer {
     public ImageView batteryLevel;
     public TextView videoCurrentTime;
     public TextView replayTextView;
-    public TextView clarity;
-    public PopupWindow clarityPopWindow;
+    /**
+     * 静音按钮
+     */
+    public ImageView iv_vol_control;
+
+    /**
+     * 重播按钮
+     */
     public TextView mRetryBtn;
     public LinearLayout mRetryLayout;
-
+    /**
+     * 手势处理显示dialog  进度
+     */
     protected Dialog mProgressDialog;
     protected ProgressBar mDialogProgressBar;
     protected TextView mDialogSeekTime;
     protected TextView mDialogTotalTime;
+    /**
+     * 手势处理显示dialog  音量
+     */
     protected ImageView mDialogIcon;
     protected Dialog mVolumeDialog;
     protected ProgressBar mDialogVolumeProgressBar;
     protected TextView mDialogVolumeTextView;
     protected ImageView mDialogVolumeImageView;
+    /**
+     * 手势处理显示dialog  亮度
+     */
     protected Dialog mBrightnessDialog;
     protected ProgressBar mDialogBrightnessProgressBar;
     protected TextView mDialogBrightnessTextView;
@@ -91,6 +106,18 @@ public class VideoPlayerStandard extends VideoPlayer {
      * 是否接受广播
      */
     private boolean brocasting = false;
+    /**
+     * 保存当前播放的音量
+     */
+    private int lastVolNum = 0;
+    /**
+     * 是否静音 默认不是静音
+     */
+    private boolean isSilence = false;
+
+    /**
+     * 接受系统广播用来更新时间和电池电量
+     */
     private BroadcastReceiver battertReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -139,15 +166,16 @@ public class VideoPlayerStandard extends VideoPlayer {
         batteryLevel = findViewById(R.id.battery_level);
         videoCurrentTime = findViewById(R.id.video_current_time);
         replayTextView = findViewById(R.id.replay_text);
-        clarity = findViewById(R.id.clarity);
+        iv_vol_control = findViewById(R.id.iv_vol_control);
         mRetryBtn = findViewById(R.id.retry_btn);
         mRetryLayout = findViewById(R.id.retry_layout);
 
         thumbImageView.setOnClickListener(this);
         backButton.setOnClickListener(this);
         tinyBackImageView.setOnClickListener(this);
-        clarity.setOnClickListener(this);
+        iv_vol_control.setOnClickListener(this);
         mRetryBtn.setOnClickListener(this);
+
     }
 
     @Override
@@ -162,27 +190,18 @@ public class VideoPlayerStandard extends VideoPlayer {
             backButton.setVisibility(View.VISIBLE);
             tinyBackImageView.setVisibility(View.INVISIBLE);
             batteryTimeLayout.setVisibility(View.VISIBLE);
-            if (((LinkedHashMap) dataSourceObjects[0]).size() == 1) {
-                clarity.setVisibility(GONE);
-            } else {
-                clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
-                clarity.setVisibility(View.VISIBLE);
-            }
             changeStartButtonSize((int) getResources().getDimension(R.dimen.jz_start_button_w_h_fullscreen));
-        } else if (currentScreen == SCREEN_WINDOW_NORMAL
-                || currentScreen == SCREEN_WINDOW_LIST) {
+        } else if (currentScreen == SCREEN_WINDOW_NORMAL || currentScreen == SCREEN_WINDOW_LIST) {
             fullscreenButton.setImageResource(R.drawable.enlarge);
             backButton.setVisibility(View.GONE);
             tinyBackImageView.setVisibility(View.INVISIBLE);
             changeStartButtonSize((int) getResources().getDimension(R.dimen.jz_start_button_w_h_normal));
             batteryTimeLayout.setVisibility(View.GONE);
-            clarity.setVisibility(View.GONE);
         } else if (currentScreen == SCREEN_WINDOW_TINY) {
             tinyBackImageView.setVisibility(View.VISIBLE);
             setAllControlsVisiblity(View.INVISIBLE, View.INVISIBLE, View.INVISIBLE,
                     View.INVISIBLE, View.INVISIBLE, View.INVISIBLE, View.INVISIBLE);
             batteryTimeLayout.setVisibility(View.GONE);
-            clarity.setVisibility(View.GONE);
         }
         setSystemTimeAndBattery();
 
@@ -298,6 +317,7 @@ public class VideoPlayerStandard extends VideoPlayer {
         super.onClick(v);
         int i = v.getId();
         if (i == R.id.thumb) {
+            //视频封面
             if (dataSourceObjects == null || Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex) == null) {
                 Toast.makeText(getContext(), getResources().getString(R.string.no_url), Toast.LENGTH_SHORT).show();
                 return;
@@ -315,60 +335,34 @@ public class VideoPlayerStandard extends VideoPlayer {
                 onClickUiToggle();
             }
         } else if (i == R.id.surface_container) {
+            //点击播放窗口
             startDismissControlViewTimer();
         } else if (i == R.id.back) {
+            //返回按钮
             backPress();
         } else if (i == R.id.back_tiny) {
+            //小窗口
             if (VideoPlayerManager.getFirstFloor().currentScreen == VideoPlayer.SCREEN_WINDOW_LIST) {
                 quitFullscreenOrTinyWindow();
             } else {
                 backPress();
             }
-        } else if (i == R.id.clarity) {
-            LayoutInflater inflater = (LayoutInflater) getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.layout_clarity, null);
-
-            OnClickListener mQualityListener = new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int index = (int) v.getTag();
-                    onStatePreparingChangingUrl(index, getCurrentPositionWhenPlaying());
-                    clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
-                    /**
-                     * //设置点击之后的颜色
-                     */
-                    for (int j = 0; j < layout.getChildCount(); j++) {
-                        if (j == currentUrlMapIndex) {
-                            ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
-                        } else {
-                            ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#ffffff"));
-                        }
-                    }
-                    if (clarityPopWindow != null) {
-                        clarityPopWindow.dismiss();
-                    }
-                }
-            };
-
-            for (int j = 0; j < ((LinkedHashMap) dataSourceObjects[0]).size(); j++) {
-                String key = Utils.getKeyFromDataSource(dataSourceObjects, j);
-                TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.layout_clarity_item, null);
-                clarityItem.setText(key);
-                clarityItem.setTag(j);
-                layout.addView(clarityItem, j);
-                clarityItem.setOnClickListener(mQualityListener);
-                if (j == currentUrlMapIndex) {
-                    clarityItem.setTextColor(Color.parseColor("#fff85959"));
-                }
+        } else if (i == R.id.iv_vol_control) {
+            //静音/非静音按钮点击
+            if (isSilence) {
+                //静音状态
+                iv_vol_control.setImageDrawable(getResources().getDrawable(R.drawable.icon_vol_normal));
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, lastVolNum, 0);
+            } else {
+                //非静音状态, 首先保存当前音量大小
+                lastVolNum = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                iv_vol_control.setImageDrawable(getResources().getDrawable(R.drawable.icon_vol_silence));
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
             }
+            isSilence = !isSilence;
 
-            clarityPopWindow = new PopupWindow(layout, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
-            clarityPopWindow.setContentView(layout);
-            clarityPopWindow.showAsDropDown(clarity);
-            layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            clarityPopWindow.update(clarity, -40, 46, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
         } else if (i == R.id.retry_btn) {
+            //重播
             if (!Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
                     Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&
                     !Utils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
@@ -433,7 +427,6 @@ public class VideoPlayerStandard extends VideoPlayer {
     public void onClickUiToggle() {
         if (bottomContainer.getVisibility() != View.VISIBLE) {
             setSystemTimeAndBattery();
-            clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
         }
         if (currentState == CURRENT_STATE_PREPARING) {
             changeUiToPreparing();
@@ -759,9 +752,13 @@ public class VideoPlayerStandard extends VideoPlayer {
         }
         if (volumePercent <= 0) {
             mDialogVolumeImageView.setBackgroundResource(R.drawable.close_volume);
+            iv_vol_control.setImageDrawable(getResources().getDrawable(R.drawable.icon_vol_silence));
+            lastVolNum = 0;
         } else {
             mDialogVolumeImageView.setBackgroundResource(R.drawable.add_volume);
+            iv_vol_control.setImageDrawable(getResources().getDrawable(R.drawable.icon_vol_normal));
         }
+        //重置静音按钮
         if (volumePercent > VideoType.MAX_PERCENT) {
             volumePercent = 100;
         } else if (volumePercent < 0) {
@@ -769,6 +766,7 @@ public class VideoPlayerStandard extends VideoPlayer {
         }
         mDialogVolumeTextView.setText(volumePercent + "%");
         mDialogVolumeProgressBar.setProgress(volumePercent);
+
         onCLickUiToggleToClear();
     }
 
@@ -845,9 +843,7 @@ public class VideoPlayerStandard extends VideoPlayer {
     public void onCompletion() {
         super.onCompletion();
         cancelDismissControlViewTimer();
-        if (clarityPopWindow != null) {
-            clarityPopWindow.dismiss();
-        }
+
     }
 
     public void dissmissControlView() {
@@ -860,9 +856,7 @@ public class VideoPlayerStandard extends VideoPlayer {
                         bottomContainer.setVisibility(View.INVISIBLE);
                         topContainer.setVisibility(View.INVISIBLE);
                         startButton.setVisibility(View.INVISIBLE);
-                        if (clarityPopWindow != null) {
-                            clarityPopWindow.dismiss();
-                        }
+
                         if (currentScreen != SCREEN_WINDOW_TINY) {
                             bottomProgressBar.setVisibility(View.VISIBLE);
                         }

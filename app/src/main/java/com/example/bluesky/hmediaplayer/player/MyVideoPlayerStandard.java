@@ -124,7 +124,7 @@ public class MyVideoPlayerStandard extends VideoPlayer {
         batteryLevel = findViewById(R.id.battery_level);
         videoCurrentTime = findViewById(R.id.video_current_time);
         replayTextView = findViewById(R.id.replay_text);
-        clarity = findViewById(R.id.clarity);
+//        clarity = findViewById(R.id.clarity);
         mRetryBtn = findViewById(R.id.retry_btn);
         mRetryLayout = findViewById(R.id.retry_layout);
 
@@ -308,49 +308,49 @@ public class MyVideoPlayerStandard extends VideoPlayer {
             } else {
                 backPress();
             }
-        } else if (i == R.id.clarity) {
-            LayoutInflater inflater = (LayoutInflater) getContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.layout_clarity, null);
-
-            OnClickListener mQualityListener = new OnClickListener() {
-                public void onClick(View v) {
-                    int index = (int) v.getTag();
-                    onStatePreparingChangingUrl(index, getCurrentPositionWhenPlaying());
-                    clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
-                    /**
-                     * 设置点击之后的颜色
-                     */
-                    for (int j = 0; j < layout.getChildCount(); j++) {
-                        if (j == currentUrlMapIndex) {
-                            ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
-                        } else {
-                            ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#ffffff"));
-                        }
-                    }
-                    if (clarityPopWindow != null) {
-                        clarityPopWindow.dismiss();
-                    }
-                }
-            };
-
-            for (int j = 0; j < ((LinkedHashMap) dataSourceObjects[0]).size(); j++) {
-                String key = Utils.getKeyFromDataSource(dataSourceObjects, j);
-                TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.layout_clarity_item, null);
-                clarityItem.setText(key);
-                clarityItem.setTag(j);
-                layout.addView(clarityItem, j);
-                clarityItem.setOnClickListener(mQualityListener);
-                if (j == currentUrlMapIndex) {
-                    clarityItem.setTextColor(Color.parseColor("#fff85959"));
-                }
-            }
-
-            clarityPopWindow = new PopupWindow(layout, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
-            clarityPopWindow.setContentView(layout);
-            clarityPopWindow.showAsDropDown(clarity);
-            layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            clarityPopWindow.update(clarity, -40, 46, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
+//        } else if (i == R.id.clarity) {
+//            LayoutInflater inflater = (LayoutInflater) getContext()
+//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.layout_clarity, null);
+//
+//            OnClickListener mQualityListener = new OnClickListener() {
+//                public void onClick(View v) {
+//                    int index = (int) v.getTag();
+//                    onStatePreparingChangingUrl(index, getCurrentPositionWhenPlaying());
+//                    clarity.setText(Utils.getKeyFromDataSource(dataSourceObjects, currentUrlMapIndex));
+//                    /**
+//                     * 设置点击之后的颜色
+//                     */
+//                    for (int j = 0; j < layout.getChildCount(); j++) {
+//                        if (j == currentUrlMapIndex) {
+//                            ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#fff85959"));
+//                        } else {
+//                            ((TextView) layout.getChildAt(j)).setTextColor(Color.parseColor("#ffffff"));
+//                        }
+//                    }
+//                    if (clarityPopWindow != null) {
+//                        clarityPopWindow.dismiss();
+//                    }
+//                }
+//            };
+//
+//            for (int j = 0; j < ((LinkedHashMap) dataSourceObjects[0]).size(); j++) {
+//                String key = Utils.getKeyFromDataSource(dataSourceObjects, j);
+//                TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.layout_clarity_item, null);
+//                clarityItem.setText(key);
+//                clarityItem.setTag(j);
+//                layout.addView(clarityItem, j);
+//                clarityItem.setOnClickListener(mQualityListener);
+//                if (j == currentUrlMapIndex) {
+//                    clarityItem.setTextColor(Color.parseColor("#fff85959"));
+//                }
+//            }
+//
+//            clarityPopWindow = new PopupWindow(layout, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+//            clarityPopWindow.setContentView(layout);
+//            clarityPopWindow.showAsDropDown(clarity);
+//            layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//            clarityPopWindow.update(clarity, -40, 46, Math.round(layout.getMeasuredWidth() * 2), layout.getMeasuredHeight());
         } else if (i == R.id.retry_btn) {
             if (!Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("file") && !
                     Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex).toString().startsWith("/") &&

@@ -64,15 +64,14 @@
             android:text="00:00"
             android:textColor="#ffffff" />
 
-        <TextView
-            android:id="@+id/clarity"
+        <ImageView
+            android:id="@+id/iv_vol_control"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:paddingLeft="20dp"
-            android:text="clarity"
-            android:textAlignment="center"
-            android:textColor="#ffffff" />
+            android:src="@drawable/icon_vol_normal"
+            android:scaleType="centerCrop"/>
 
         <ImageView
             android:id="@+id/fullscreen"
