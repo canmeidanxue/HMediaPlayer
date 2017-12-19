@@ -36,6 +36,7 @@ import java.util.TimerTask;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ *
  * @author blue_sky
  */
 
@@ -96,20 +97,20 @@ public class VideoPlayerStandard extends VideoPlayer {
             String action = intent.getAction();
             if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
                 int level = intent.getIntExtra("level", 0);
-                int scale = intent.getIntExtra("scale", 100);
-                int percent = level * 100 / scale;
-                if (percent < 15) {
-                    batteryLevel.setBackgroundResource(R.drawable.battery_level_10);
-                } else if (percent >= 15 && percent < 40) {
-                    batteryLevel.setBackgroundResource(R.drawable.battery_level_30);
-                } else if (percent >= 40 && percent < 60) {
-                    batteryLevel.setBackgroundResource(R.drawable.battery_level_50);
-                } else if (percent >= 60 && percent < 80) {
-                    batteryLevel.setBackgroundResource(R.drawable.battery_level_70);
-                } else if (percent >= 80 && percent < 95) {
-                    batteryLevel.setBackgroundResource(R.drawable.battery_level_90);
-                } else if (percent >= 95 && percent <= 100) {
-                    batteryLevel.setBackgroundResource(R.drawable.battery_level_100);
+                int scale = intent.getIntExtra("scale", VideoType.ELECTRIC_QUANTITY_100);
+                int percent = level * VideoType.ELECTRIC_QUANTITY_100 / scale;
+                if (percent < VideoType.ELECTRIC_QUANTITY_15) {
+                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_10);
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_15 && percent < VideoType.ELECTRIC_QUANTITY_40) {
+                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_30);
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_40 && percent < VideoType.ELECTRIC_QUANTITY_60) {
+                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_50);
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_60 && percent < VideoType.ELECTRIC_QUANTITY_80) {
+                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_70);
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_80 && percent < VideoType.ELECTRIC_QUANTITY_95) {
+                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_90);
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_95 && percent <= VideoType.ELECTRIC_QUANTITY_100) {
+                    batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_100);
                 }
                 getContext().unregisterReceiver(battertReceiver);
                 brocasting = false;
@@ -157,7 +158,7 @@ public class VideoPlayerStandard extends VideoPlayer {
         }
         titleTextView.setText(objects[0].toString());
         if (currentScreen == SCREEN_WINDOW_FULLSCREEN) {
-            fullscreenButton.setImageResource(R.drawable.shrink);
+            fullscreenButton.setImageResource(R.drawable.jz_shrink);
             backButton.setVisibility(View.VISIBLE);
             tinyBackImageView.setVisibility(View.INVISIBLE);
             batteryTimeLayout.setVisibility(View.VISIBLE);
@@ -170,7 +171,7 @@ public class VideoPlayerStandard extends VideoPlayer {
             changeStartButtonSize((int) getResources().getDimension(R.dimen.jz_start_button_w_h_fullscreen));
         } else if (currentScreen == SCREEN_WINDOW_NORMAL
                 || currentScreen == SCREEN_WINDOW_LIST) {
-            fullscreenButton.setImageResource(R.drawable.enlarge);
+            fullscreenButton.setImageResource(R.drawable.jz_enlarge);
             backButton.setVisibility(View.GONE);
             tinyBackImageView.setVisibility(View.INVISIBLE);
             changeStartButtonSize((int) getResources().getDimension(R.dimen.jz_start_button_w_h_normal));
@@ -204,7 +205,7 @@ public class VideoPlayerStandard extends VideoPlayer {
 
     @Override
     public int getLayoutId() {
-        return R.layout.layout_standard;
+        return R.layout.jz_layout_standard;
     }
 
     @Override
@@ -326,7 +327,7 @@ public class VideoPlayerStandard extends VideoPlayer {
         } else if (i == R.id.clarity) {
             LayoutInflater inflater = (LayoutInflater) getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.layout_clarity, null);
+            final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.jz_layout_clarity, null);
 
             OnClickListener mQualityListener = new OnClickListener() {
                 @Override
@@ -352,7 +353,7 @@ public class VideoPlayerStandard extends VideoPlayer {
 
             for (int j = 0; j < ((LinkedHashMap) dataSourceObjects[0]).size(); j++) {
                 String key = Utils.getKeyFromDataSource(dataSourceObjects, j);
-                TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.layout_clarity_item, null);
+                TextView clarityItem = (TextView) View.inflate(getContext(), R.layout.jz_layout_clarity_item, null);
                 clarityItem.setText(key);
                 clarityItem.setTag(j);
                 layout.addView(clarityItem, j);
@@ -532,8 +533,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 
@@ -552,8 +553,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -573,8 +574,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -592,8 +593,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -613,8 +614,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 
@@ -631,8 +632,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -652,8 +653,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -673,8 +674,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -693,17 +694,17 @@ public class VideoPlayerStandard extends VideoPlayer {
     public void updateStartImage() {
         if (currentState == CURRENT_STATE_PLAYING) {
             startButton.setVisibility(VISIBLE);
-            startButton.setImageResource(R.drawable.click_pause_selector);
+            startButton.setImageResource(R.drawable.jz_click_pause_selector);
             replayTextView.setVisibility(INVISIBLE);
         } else if (currentState == CURRENT_STATE_ERROR) {
             startButton.setVisibility(INVISIBLE);
             replayTextView.setVisibility(INVISIBLE);
         } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
             startButton.setVisibility(VISIBLE);
-            startButton.setImageResource(R.drawable.click_replay_selector);
+            startButton.setImageResource(R.drawable.jz_click_replay_selector);
             replayTextView.setVisibility(VISIBLE);
         } else {
-            startButton.setImageResource(R.drawable.click_play_selector);
+            startButton.setImageResource(R.drawable.jz_click_play_selector);
             replayTextView.setVisibility(INVISIBLE);
         }
     }
@@ -712,7 +713,7 @@ public class VideoPlayerStandard extends VideoPlayer {
     public void showProgressDialog(float deltaX, String seekTime, long seekTimePosition, String totalTime, long totalTimeDuration) {
         super.showProgressDialog(deltaX, seekTime, seekTimePosition, totalTime, totalTimeDuration);
         if (mProgressDialog == null) {
-            View localView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_progress, null);
+            View localView = LayoutInflater.from(getContext()).inflate(R.layout.jz_dialog_progress, null);
             mDialogProgressBar = localView.findViewById(R.id.duration_progressbar);
             mDialogSeekTime = localView.findViewById(R.id.tv_current);
             mDialogTotalTime = localView.findViewById(R.id.tv_duration);
@@ -725,11 +726,12 @@ public class VideoPlayerStandard extends VideoPlayer {
 
         mDialogSeekTime.setText(seekTime);
         mDialogTotalTime.setText(" / " + totalTime);
-        mDialogProgressBar.setProgress(totalTimeDuration <= 0 ? 0 : (int) (seekTimePosition * 100 / totalTimeDuration));
+        mDialogProgressBar.setProgress(totalTimeDuration <= 0 ? 0 : (int) (seekTimePosition
+                * VideoType.MAX_PERCENT / totalTimeDuration));
         if (deltaX > 0) {
-            mDialogIcon.setBackgroundResource(R.drawable.forward_icon);
+            mDialogIcon.setBackgroundResource(R.drawable.jz_forward_icon);
         } else {
-            mDialogIcon.setBackgroundResource(R.drawable.backward_icon);
+            mDialogIcon.setBackgroundResource(R.drawable.jz_backward_icon);
         }
         onCLickUiToggleToClear();
     }
@@ -746,7 +748,7 @@ public class VideoPlayerStandard extends VideoPlayer {
     public void showVolumeDialog(float deltaY, int volumePercent) {
         super.showVolumeDialog(deltaY, volumePercent);
         if (mVolumeDialog == null) {
-            View localView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_volume, null);
+            View localView = LayoutInflater.from(getContext()).inflate(R.layout.jz_dialog_volume, null);
             mDialogVolumeImageView = localView.findViewById(R.id.volume_image_tip);
             mDialogVolumeTextView = localView.findViewById(R.id.tv_volume);
             mDialogVolumeProgressBar = localView.findViewById(R.id.volume_progressbar);
@@ -756,11 +758,11 @@ public class VideoPlayerStandard extends VideoPlayer {
             mVolumeDialog.show();
         }
         if (volumePercent <= 0) {
-            mDialogVolumeImageView.setBackgroundResource(R.drawable.close_volume);
+            mDialogVolumeImageView.setBackgroundResource(R.drawable.jz_close_volume);
         } else {
-            mDialogVolumeImageView.setBackgroundResource(R.drawable.add_volume);
+            mDialogVolumeImageView.setBackgroundResource(R.drawable.jz_add_volume);
         }
-        if (volumePercent > 100) {
+        if (volumePercent > VideoType.MAX_PERCENT) {
             volumePercent = 100;
         } else if (volumePercent < 0) {
             volumePercent = 0;
@@ -782,7 +784,7 @@ public class VideoPlayerStandard extends VideoPlayer {
     public void showBrightnessDialog(int brightnessPercent) {
         super.showBrightnessDialog(brightnessPercent);
         if (mBrightnessDialog == null) {
-            View localView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_brightness, null);
+            View localView = LayoutInflater.from(getContext()).inflate(R.layout.jz_dialog_brightness, null);
             mDialogBrightnessTextView = localView.findViewById(R.id.tv_brightness);
             mDialogBrightnessProgressBar = localView.findViewById(R.id.brightness_progressbar);
             mBrightnessDialog = createDialogWithView(localView);
@@ -790,7 +792,7 @@ public class VideoPlayerStandard extends VideoPlayer {
         if (!mBrightnessDialog.isShowing()) {
             mBrightnessDialog.show();
         }
-        if (brightnessPercent > 100) {
+        if (brightnessPercent > VideoType.MAX_PERCENT) {
             brightnessPercent = 100;
         } else if (brightnessPercent < 0) {
             brightnessPercent = 0;
@@ -870,21 +872,14 @@ public class VideoPlayerStandard extends VideoPlayer {
         }
     }
 
-    public class MyHandler extends Handler{
+    public class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.what == WHAT_EXTRA){
+            if (msg.what == WHAT_EXTRA) {
                 Log.e(TAG, "handleMessage: 收到消息隐藏按钮");
                 dissmissControlView();
             }
         }
     }
-//    public class DismissControlViewTimerTask extends TimerTask {
-//
-//        @Override
-//        public void run() {
-//
-//        }
-//    }
 }
