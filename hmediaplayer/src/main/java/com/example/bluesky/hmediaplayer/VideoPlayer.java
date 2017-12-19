@@ -77,7 +77,10 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
     public static int VIDEO_IMAGE_DISPLAY_TYPE = 0;
     public static long CLICK_QUIT_FULLSCREEN_TIME = 0;
     public static long lastAutoFullscreenTime = 0;
-    public static AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {//是否新建个class，代码更规矩，并且变量的位置也很尴尬
+    /**
+     * 是否新建个class，代码更规矩，并且变量的位置也很尴尬
+     */
+    public static AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange) {
@@ -99,6 +102,8 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                     Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT [" + this.hashCode() + "]");
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    break;
+                default:
                     break;
             }
         }

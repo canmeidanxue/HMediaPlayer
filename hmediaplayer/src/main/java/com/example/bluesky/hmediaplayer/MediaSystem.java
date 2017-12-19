@@ -66,8 +66,9 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
 
     @Override
     public void release() {
-        if (mediaPlayer != null)
+        if (mediaPlayer != null){
             mediaPlayer.release();
+        }
     }
 
     @Override
@@ -92,8 +93,8 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
             MediaManager.instance().mainThreadHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (VideoPlayerManager.getCurrentJzvd() != null) {
-                        VideoPlayerManager.getCurrentJzvd().onPrepared();
+                    if (VideoPlayerManager.getCurrentHvd() != null) {
+                        VideoPlayerManager.getCurrentHvd().onPrepared();
                     }
                 }
             });
@@ -105,8 +106,8 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
         MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (VideoPlayerManager.getCurrentJzvd() != null) {
-                    VideoPlayerManager.getCurrentJzvd().onAutoCompletion();
+                if (VideoPlayerManager.getCurrentHvd() != null) {
+                    VideoPlayerManager.getCurrentHvd().onAutoCompletion();
                 }
             }
         });
@@ -117,8 +118,8 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
         MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (VideoPlayerManager.getCurrentJzvd() != null) {
-                    VideoPlayerManager.getCurrentJzvd().setBufferProgress(percent);
+                if (VideoPlayerManager.getCurrentHvd() != null) {
+                    VideoPlayerManager.getCurrentHvd().setBufferProgress(percent);
                 }
             }
         });
@@ -129,8 +130,8 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
         MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (VideoPlayerManager.getCurrentJzvd() != null) {
-                    VideoPlayerManager.getCurrentJzvd().onSeekComplete();
+                if (VideoPlayerManager.getCurrentHvd() != null) {
+                    VideoPlayerManager.getCurrentHvd().onSeekComplete();
                 }
             }
         });
@@ -141,8 +142,8 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
         MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (VideoPlayerManager.getCurrentJzvd() != null) {
-                    VideoPlayerManager.getCurrentJzvd().onError(what, extra);
+                if (VideoPlayerManager.getCurrentHvd() != null) {
+                    VideoPlayerManager.getCurrentHvd().onError(what, extra);
                 }
             }
         });
@@ -154,11 +155,11 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
         MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (VideoPlayerManager.getCurrentJzvd() != null) {
+                if (VideoPlayerManager.getCurrentHvd() != null) {
                     if (what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                        VideoPlayerManager.getCurrentJzvd().onPrepared();
+                        VideoPlayerManager.getCurrentHvd().onPrepared();
                     } else {
-                        VideoPlayerManager.getCurrentJzvd().onInfo(what, extra);
+                        VideoPlayerManager.getCurrentHvd().onInfo(what, extra);
                     }
                 }
             }
@@ -173,8 +174,8 @@ public class MediaSystem extends BaseMediaInterface implements MediaPlayer.OnPre
         MediaManager.instance().mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (VideoPlayerManager.getCurrentJzvd() != null) {
-                    VideoPlayerManager.getCurrentJzvd().onVideoSizeChanged();
+                if (VideoPlayerManager.getCurrentHvd() != null) {
+                    VideoPlayerManager.getCurrentHvd().onVideoSizeChanged();
                 }
             }
         });

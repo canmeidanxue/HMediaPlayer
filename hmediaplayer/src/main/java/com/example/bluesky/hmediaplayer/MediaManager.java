@@ -114,7 +114,7 @@ public class MediaManager implements TextureView.SurfaceTextureListener {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-        Log.i(TAG, "onSurfaceTextureAvailable [" + VideoPlayerManager.getCurrentJzvd().hashCode() + "] ");
+        Log.i(TAG, "onSurfaceTextureAvailable [" + VideoPlayerManager.getCurrentHvd().hashCode() + "] ");
         if (savedSurfaceTexture == null) {
             savedSurfaceTexture = surfaceTexture;
             prepare();
