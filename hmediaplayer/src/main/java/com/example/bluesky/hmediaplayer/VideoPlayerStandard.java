@@ -9,7 +9,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,9 +40,27 @@ import java.util.TimerTask;
  */
 
 public class VideoPlayerStandard extends VideoPlayer {
-    protected static Timer DISMISS_CONTROL_VIEW_TIMER;
+    /**
+     * handler控制按钮显示与隐藏
+     */
+    private MyHandler mhandler = new MyHandler();
 
+    /**
+     * handler 控制what值
+     */
+    private static final int WHAT_EXTRA = 1001;
+
+    /**
+     * handler 延时时间
+     */
+    private static final int WAIT_TIME = 2500;
+    /**
+     * 返回按钮
+     */
     public ImageView backButton;
+    /**
+     * 底部进度条, 加载进度条
+     */
     public ProgressBar bottomProgressBar, loadingProgressBar;
     public TextView titleTextView;
     public ImageView thumbImageView;
@@ -53,7 +74,6 @@ public class VideoPlayerStandard extends VideoPlayer {
     public TextView mRetryBtn;
     public LinearLayout mRetryLayout;
 
-    protected DismissControlViewTimerTask mDismissControlViewTimerTask;
     protected Dialog mProgressDialog;
     protected ProgressBar mDialogProgressBar;
     protected TextView mDialogSeekTime;
@@ -66,6 +86,9 @@ public class VideoPlayerStandard extends VideoPlayer {
     protected Dialog mBrightnessDialog;
     protected ProgressBar mDialogBrightnessProgressBar;
     protected TextView mDialogBrightnessTextView;
+    /**
+     * 是否接受广播
+     */
     private boolean brocasting = false;
     private BroadcastReceiver battertReceiver = new BroadcastReceiver() {
         @Override
@@ -351,7 +374,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 showWifiDialog(UserAction.ON_CLICK_START_ICON);
                 return;
             }
-            initTextureView();//和开始播放的代码重复
+            //和开始播放的代码重复
+            initTextureView();
             addTextureView();
             MediaManager.setDataSource(dataSourceObjects);
             MediaManager.setCurrentDataSource(Utils.getCurrentFromDataSource(dataSourceObjects, currentUrlMapIndex));
@@ -431,6 +455,9 @@ public class VideoPlayerStandard extends VideoPlayer {
         }
     }
 
+    /**
+     * 设置系统时间和电量
+     */
     public void setSystemTimeAndBattery() {
         SimpleDateFormat dateFormater = new SimpleDateFormat("HH:mm");
         Date date = new Date();
@@ -797,19 +824,13 @@ public class VideoPlayerStandard extends VideoPlayer {
 
     public void startDismissControlViewTimer() {
         cancelDismissControlViewTimer();
-        DISMISS_CONTROL_VIEW_TIMER = new Timer();
-        mDismissControlViewTimerTask = new DismissControlViewTimerTask();
-        DISMISS_CONTROL_VIEW_TIMER.schedule(mDismissControlViewTimerTask, 2500);
+        mhandler.sendEmptyMessageDelayed(WHAT_EXTRA, WAIT_TIME);
     }
 
     public void cancelDismissControlViewTimer() {
-        if (DISMISS_CONTROL_VIEW_TIMER != null) {
-            DISMISS_CONTROL_VIEW_TIMER.cancel();
+        if (mhandler != null) {
+            mhandler.removeMessages(WHAT_EXTRA);
         }
-        if (mDismissControlViewTimerTask != null) {
-            mDismissControlViewTimerTask.cancel();
-        }
-
     }
 
     @Override
@@ -828,8 +849,7 @@ public class VideoPlayerStandard extends VideoPlayer {
     }
 
     public void dissmissControlView() {
-        if (currentState != CURRENT_STATE_NORMAL
-                && currentState != CURRENT_STATE_ERROR
+        if (currentState != CURRENT_STATE_NORMAL && currentState != CURRENT_STATE_ERROR
                 && currentState != CURRENT_STATE_AUTO_COMPLETE) {
             if (getContext() != null && getContext() instanceof Activity) {
                 ((Activity) getContext()).runOnUiThread(new Runnable() {
@@ -850,11 +870,21 @@ public class VideoPlayerStandard extends VideoPlayer {
         }
     }
 
-    public class DismissControlViewTimerTask extends TimerTask {
-
+    public class MyHandler extends Handler{
         @Override
-        public void run() {
-            dissmissControlView();
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg.what == WHAT_EXTRA){
+                Log.e(TAG, "handleMessage: 收到消息隐藏按钮");
+                dissmissControlView();
+            }
         }
     }
+//    public class DismissControlViewTimerTask extends TimerTask {
+//
+//        @Override
+//        public void run() {
+//
+//        }
+//    }
 }
