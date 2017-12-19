@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.bluesky.hmediaplayer.MediaManager;
 import com.example.bluesky.hmediaplayer.Utils;
@@ -38,11 +39,11 @@ public class MoreVideoPlayerActivity extends AppCompatActivity implements Adapte
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         List<VideoInfo> videoInfos = new ArrayList<>();
-        for (int i= 0;i< VideoConstant.videoUrls.length;i++){
+        for (int i= 0;i< VideoConstant.videoUrlList.length;i++){
             VideoInfo videoInfo = new VideoInfo();
             videoInfo.setUrl(VideoConstant.videoUrlList[i]);
             videoInfo.setTitle(VideoConstant.videoTitle[i]);
-            videoInfo.setUrl(VideoConstant.videoImg[i]);
+            videoInfo.setImgUrl(VideoConstant.videoImg[i]);
             videoInfos.add(videoInfo);
         }
         adapterRecyclerViewVideo = new AdapterRecyclerViewVideo(this);
@@ -83,12 +84,15 @@ public class MoreVideoPlayerActivity extends AppCompatActivity implements Adapte
             case android.R.id.home:
                 finish();
                 break;
+                default:
+                    break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void itemTouch() {
+    public void itemTouch(VideoInfo videoInfo) {
+        Toast.makeText(this, videoInfo.getTitle(), Toast.LENGTH_SHORT).show();
 
     }
 }

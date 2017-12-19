@@ -21,7 +21,7 @@ public class SigleVideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sigle_video);
         customVideoPlayer = findViewById(R.id.singleHVideo);
-        customVideoPlayer.setUp("http://jzvd.nathen.cn/342a5f7ef6124a4a8faf00e738b8bee4/cf6d9db0bd4d41f59d09ea0a81e918fd-5287d2089db37e62345123a1be272f8b.mp4"
+        customVideoPlayer.setUp("http://112.253.22.157/17/z/z/y/u/zzyuasjwufnqerzvyxgkuigrkcatxr/hc.yinyuetai.com/D046015255134077DDB3ACA0D7E68D45.flv"
                 , VideoPlayer.SCREEN_WINDOW_NORMAL, "我是一个好人");
         Picasso.with(this)
                 .load("http://jzvd-pic.nathen.cn/jzvd-pic/1bb2ebbe-140d-4e2e-abd2-9e7e564f71ac.png")

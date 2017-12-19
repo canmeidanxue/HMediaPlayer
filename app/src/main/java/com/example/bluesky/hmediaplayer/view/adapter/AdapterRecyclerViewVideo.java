@@ -25,11 +25,10 @@ import java.util.List;
  */
 public class AdapterRecyclerViewVideo extends RecyclerView.Adapter<AdapterRecyclerViewVideo.MyViewHolder> {
 
-    public static final String TAG = "AdapterRecyclerViewVideo";
     private List<VideoInfo> urlList;
-    int[] videoIndexs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     private Context context;
     private OnItemClick onItemClick;
+    private String TAG = AdapterRecyclerViewVideo.class.getSimpleName();
 
     public AdapterRecyclerViewVideo(Context context) {
         this.context = context;
@@ -46,7 +45,6 @@ public class AdapterRecyclerViewVideo extends RecyclerView.Adapter<AdapterRecycl
         return holder;
     }
 
-    @SuppressLint("LongLogTag")
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Log.i(TAG, "onBindViewHolder [" + holder.videoPlayerStandard.hashCode() + "] position=" + position);
@@ -57,7 +55,7 @@ public class AdapterRecyclerViewVideo extends RecyclerView.Adapter<AdapterRecycl
         Picasso.with(holder.videoPlayerStandard.getContext())
                 .load(urlList.get(position).getImgUrl())
                 .into(holder.videoPlayerStandard.thumbImageView);
-        holder.llDetail.setOnClickListener(i ->onItemClick.itemTouch());
+        holder.llDetail.setOnClickListener(i ->onItemClick.itemTouch(urlList.get(position)));
     }
 
     @Override
@@ -84,7 +82,10 @@ public class AdapterRecyclerViewVideo extends RecyclerView.Adapter<AdapterRecycl
     }
 
     public interface OnItemClick {
-        void itemTouch();
+        /**
+         * 点击Item回调
+         */
+        void itemTouch(VideoInfo videoInfo);
     }
 
     public void setItemClick(OnItemClick onItemClick) {
