@@ -674,7 +674,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                                                 e.printStackTrace();
                                             }
                                         } else {
-                                            mGestureDownBrightness = lp.screenBrightness * 255;
+                                            mGestureDownBrightness = lp.screenBrightness * VideoType.MAX_BRIGHTNESS;
                                             Log.i(TAG, "current activity brightness: " + mGestureDownBrightness);
                                         }
                                     } else {//右侧改变声音
@@ -702,27 +702,27 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                         int deltaV = (int) (max * deltaY * 3 / mScreenHeight);
                         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mGestureDownVolume + deltaV, 0);
                         //dialog中显示百分比
-                        int volumePercent = (int) (mGestureDownVolume * 100 / max + deltaY * 3 * 100 / mScreenHeight);
+                        int volumePercent = (int) (mGestureDownVolume * VideoType.MAX_PERCENT / max + deltaY * 3 * VideoType.MAX_PERCENT / mScreenHeight);
                         showVolumeDialog(-deltaY, volumePercent);
                     }
 
                     if (mChangeBrightness) {
                         deltaY = -deltaY;
-                        int deltaV = (int) (255 * deltaY * 3 / mScreenHeight);
+                        int deltaV = (int) (VideoType.MAX_BRIGHTNESS * deltaY * 3 / mScreenHeight);
                         WindowManager.LayoutParams params = Utils.getWindow(getContext()).getAttributes();
                         /**
                          * 这和声音有区别，必须自己过滤一下负值
                          */
-                        if (((mGestureDownBrightness + deltaV) / 255) >= 1) {
+                        if (((mGestureDownBrightness + deltaV) / VideoType.MAX_BRIGHTNESS) >= 1) {
                             params.screenBrightness = 1;
-                        } else if (((mGestureDownBrightness + deltaV) / 255) <= 0) {
+                        } else if (((mGestureDownBrightness + deltaV) / VideoType.MAX_BRIGHTNESS) <= 0) {
                             params.screenBrightness = 0.01f;
                         } else {
-                            params.screenBrightness = (mGestureDownBrightness + deltaV) / 255;
+                            params.screenBrightness = (mGestureDownBrightness + deltaV) / VideoType.MAX_BRIGHTNESS;
                         }
                         Utils.getWindow(getContext()).setAttributes(params);
                         //dialog中显示百分比
-                        int brightnessPercent = (int) (mGestureDownBrightness * 100 / 255 + deltaY * 3 * 100 / mScreenHeight);
+                        int brightnessPercent = (int) (mGestureDownBrightness * VideoType.MAX_PERCENT / VideoType.MAX_BRIGHTNESS + deltaY * 3 * VideoType.MAX_PERCENT / mScreenHeight);
                         showBrightnessDialog(brightnessPercent);
 //                        mDownY = y;
                     }
@@ -737,7 +737,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                         onEvent(UserAction.ON_TOUCH_SCREEN_SEEK_POSITION);
                         MediaManager.seekTo(mSeekTimePosition);
                         long duration = getDuration();
-                        int progress = (int) (mSeekTimePosition * 100 / (duration == 0 ? 1 : duration));
+                        int progress = (int) (mSeekTimePosition * VideoType.MAX_PERCENT / (duration == 0 ? 1 : duration));
                         progressBar.setProgress(progress);
                     }
                     if (mChangeVolume) {
@@ -861,7 +861,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
         Log.i(TAG, "onStateAutoComplete " + " [" + this.hashCode() + "] ");
         currentState = CURRENT_STATE_AUTO_COMPLETE;
         cancelProgressTimer();
-        progressBar.setProgress(100);
+        progressBar.setProgress(VideoType.MAX_PERCENT);
         currentTimeTextView.setText(totalTimeTextView.getText());
     }
 
@@ -1107,7 +1107,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                 currentState != CURRENT_STATE_PAUSE) {
             return;
         }
-        long time = seekBar.getProgress() * getDuration() / 100;
+        long time = seekBar.getProgress() * getDuration() / VideoType.MAX_PERCENT;
         MediaManager.seekTo(time);
         Log.i(TAG, "seekTo " + time + " [" + this.hashCode() + "] ");
     }
@@ -1314,7 +1314,7 @@ public abstract class VideoPlayer extends FrameLayout implements View.OnClickLis
                 if (currentState == CURRENT_STATE_PLAYING || currentState == CURRENT_STATE_PAUSE) {
                     long position = getCurrentPositionWhenPlaying();
                     long duration = getDuration();
-                    int progress = (int) (position * 100 / (duration == 0 ? 1 : duration));
+                    int progress = (int) (position * VideoType.MAX_PERCENT / (duration == 0 ? 1 : duration));
                     setProgressAndText(progress, position, duration);
                     sendEmptyMessageDelayed(WHAT_EXTRA, FULL_SCREEN_NORMAL_DELAY);
                 }

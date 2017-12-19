@@ -36,6 +36,7 @@ import java.util.TimerTask;
 
 /**
  * Created by blue_sky on 2017/12/18.
+ *
  * @author blue_sky
  */
 
@@ -96,19 +97,19 @@ public class VideoPlayerStandard extends VideoPlayer {
             String action = intent.getAction();
             if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
                 int level = intent.getIntExtra("level", 0);
-                int scale = intent.getIntExtra("scale", 100);
-                int percent = level * 100 / scale;
-                if (percent < 15) {
+                int scale = intent.getIntExtra("scale", VideoType.ELECTRIC_QUANTITY_100);
+                int percent = level * VideoType.ELECTRIC_QUANTITY_100 / scale;
+                if (percent < VideoType.ELECTRIC_QUANTITY_15) {
                     batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_10);
-                } else if (percent >= 15 && percent < 40) {
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_15 && percent < VideoType.ELECTRIC_QUANTITY_40) {
                     batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_30);
-                } else if (percent >= 40 && percent < 60) {
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_40 && percent < VideoType.ELECTRIC_QUANTITY_60) {
                     batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_50);
-                } else if (percent >= 60 && percent < 80) {
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_60 && percent < VideoType.ELECTRIC_QUANTITY_80) {
                     batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_70);
-                } else if (percent >= 80 && percent < 95) {
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_80 && percent < VideoType.ELECTRIC_QUANTITY_95) {
                     batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_90);
-                } else if (percent >= 95 && percent <= 100) {
+                } else if (percent >= VideoType.ELECTRIC_QUANTITY_95 && percent <= VideoType.ELECTRIC_QUANTITY_100) {
                     batteryLevel.setBackgroundResource(R.drawable.jz_battery_level_100);
                 }
                 getContext().unregisterReceiver(battertReceiver);
@@ -532,8 +533,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 
@@ -552,8 +553,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -573,8 +574,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -592,8 +593,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -613,8 +614,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 
@@ -631,8 +632,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -652,8 +653,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -673,8 +674,8 @@ public class VideoPlayerStandard extends VideoPlayer {
                 break;
             case SCREEN_WINDOW_TINY:
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
 
     }
@@ -725,7 +726,8 @@ public class VideoPlayerStandard extends VideoPlayer {
 
         mDialogSeekTime.setText(seekTime);
         mDialogTotalTime.setText(" / " + totalTime);
-        mDialogProgressBar.setProgress(totalTimeDuration <= 0 ? 0 : (int) (seekTimePosition * 100 / totalTimeDuration));
+        mDialogProgressBar.setProgress(totalTimeDuration <= 0 ? 0 : (int) (seekTimePosition
+                * VideoType.MAX_PERCENT / totalTimeDuration));
         if (deltaX > 0) {
             mDialogIcon.setBackgroundResource(R.drawable.jz_forward_icon);
         } else {
@@ -760,7 +762,7 @@ public class VideoPlayerStandard extends VideoPlayer {
         } else {
             mDialogVolumeImageView.setBackgroundResource(R.drawable.jz_add_volume);
         }
-        if (volumePercent > 100) {
+        if (volumePercent > VideoType.MAX_PERCENT) {
             volumePercent = 100;
         } else if (volumePercent < 0) {
             volumePercent = 0;
@@ -790,7 +792,7 @@ public class VideoPlayerStandard extends VideoPlayer {
         if (!mBrightnessDialog.isShowing()) {
             mBrightnessDialog.show();
         }
-        if (brightnessPercent > 100) {
+        if (brightnessPercent > VideoType.MAX_PERCENT) {
             brightnessPercent = 100;
         } else if (brightnessPercent < 0) {
             brightnessPercent = 0;
@@ -870,21 +872,14 @@ public class VideoPlayerStandard extends VideoPlayer {
         }
     }
 
-    public class MyHandler extends Handler{
+    public class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.what == WHAT_EXTRA){
+            if (msg.what == WHAT_EXTRA) {
                 Log.e(TAG, "handleMessage: 收到消息隐藏按钮");
                 dissmissControlView();
             }
         }
     }
-//    public class DismissControlViewTimerTask extends TimerTask {
-//
-//        @Override
-//        public void run() {
-//
-//        }
-//    }
 }
