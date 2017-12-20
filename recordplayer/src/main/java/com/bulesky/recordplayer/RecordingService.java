@@ -1,4 +1,4 @@
-package com.bulesky.recordplayer.modle;
+package com.bulesky.recordplayer;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,8 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.bulesky.recordplayer.MainActivity;
-import com.bulesky.recordplayer.R;
+import com.bulesky.recordplayer.activities.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,9 +119,6 @@ public class RecordingService extends Service {
     }
 
     public void stopRecording() {
-        mRecorder.setOnErrorListener(null);
-        mRecorder.setOnInfoListener(null);
-        mRecorder.setPreviewDisplay(null);
         mRecorder.stop();
         mElapsedMillis = (System.currentTimeMillis() - mStartingTimeMillis);
         mRecorder.release();
@@ -163,7 +159,7 @@ public class RecordingService extends Service {
     private Notification createNotification() {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(getApplicationContext())
-                        .setSmallIcon(R.mipmap.ic_mic_white_36dp)
+                        .setSmallIcon(R.drawable.ic_mic_white_36dp)
                         .setContentTitle(getString(R.string.notification_recording))
                         .setContentText(mTimerFormat.format(mElapsedSeconds * 1000))
                         .setOngoing(true);

@@ -6,8 +6,10 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 
+import com.bulesky.recordplayer.BuildConfig;
+import com.bulesky.recordplayer.MySharedPreferences;
 import com.bulesky.recordplayer.R;
-import com.bulesky.recordplayer.modle.MySharedPreferences;
+import com.bulesky.recordplayer.activities.SettingsActivity;
 
 
 /**
@@ -31,12 +33,12 @@ public class SettingsFragment extends PreferenceFragment {
         });
 
         Preference aboutPref = findPreference(getString(R.string.pref_about_key));
-//        aboutPref.setSummary(getString(R.string.pref_about_desc, BuildConfig.VERSION_NAME));
+        aboutPref.setSummary(getString(R.string.pref_about_desc, BuildConfig.VERSION_NAME));
         aboutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-//                LicensesFragment licensesFragment = new LicensesFragment();
-//                licensesFragment.show(((SettingsActivity)getActivity()).getSupportFragmentManager().beginTransaction(), "dialog_licenses");
+                LicensesFragment licensesFragment = new LicensesFragment();
+                licensesFragment.show(((SettingsActivity)getActivity()).getSupportFragmentManager().beginTransaction(), "dialog_licenses");
                 return true;
             }
         });

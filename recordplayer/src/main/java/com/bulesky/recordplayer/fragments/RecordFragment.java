@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bulesky.recordplayer.R;
-import com.bulesky.recordplayer.modle.RecordingService;
+import com.bulesky.recordplayer.RecordingService;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.io.File;
@@ -91,7 +91,7 @@ public class RecordFragment extends Fragment {
             }
         });
 
-        mPauseButton = recordView.findViewById(R.id.btnPause);
+        mPauseButton = (Button) recordView.findViewById(R.id.btnPause);
         mPauseButton.setVisibility(View.GONE); //hide pause button before recording starts
         mPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +112,7 @@ public class RecordFragment extends Fragment {
 
         if (start) {
             // start recording
-            mRecordButton.setImageResource(R.mipmap.ic_media_stop);
+            mRecordButton.setImageResource(R.drawable.ic_media_stop);
             //mPauseButton.setVisibility(View.VISIBLE);
             Toast.makeText(getActivity(),R.string.toast_recording_start, Toast.LENGTH_SHORT).show();
             File folder = new File(Environment.getExternalStorageDirectory() + "/SoundRecorder");
@@ -150,7 +150,7 @@ public class RecordFragment extends Fragment {
 
         } else {
             //stop recording
-            mRecordButton.setImageResource(R.mipmap.ic_mic_white_36dp);
+            mRecordButton.setImageResource(R.drawable.ic_mic_white_36dp);
             //mPauseButton.setVisibility(View.GONE);
             mChronometer.stop();
             mChronometer.setBase(SystemClock.elapsedRealtime());
@@ -168,14 +168,14 @@ public class RecordFragment extends Fragment {
         if (pause) {
             //pause recording
             mPauseButton.setCompoundDrawablesWithIntrinsicBounds
-                    (R.mipmap.ic_media_play ,0 ,0 ,0);
+                    (R.drawable.ic_media_play ,0 ,0 ,0);
             mRecordingPrompt.setText((String)getString(R.string.resume_recording_button).toUpperCase());
             timeWhenPaused = mChronometer.getBase() - SystemClock.elapsedRealtime();
             mChronometer.stop();
         } else {
             //resume recording
             mPauseButton.setCompoundDrawablesWithIntrinsicBounds
-                    (R.mipmap.ic_media_pause ,0 ,0 ,0);
+                    (R.drawable.ic_media_pause ,0 ,0 ,0);
             mRecordingPrompt.setText((String)getString(R.string.pause_recording_button).toUpperCase());
             mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenPaused);
             mChronometer.start();

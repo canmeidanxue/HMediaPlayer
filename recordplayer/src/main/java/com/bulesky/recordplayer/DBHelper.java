@@ -1,4 +1,4 @@
-package com.bulesky.recordplayer.modle;
+package com.bulesky.recordplayer;
 
 import android.content.ContentValues;
 import android.content.Context;

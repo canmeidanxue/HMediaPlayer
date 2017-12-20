@@ -14,7 +14,7 @@
         android:layout_marginBottom="10dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@mipmap/ic_mic_white_36dp" />
+        android:src="@drawable/ic_mic_white_36dp" />
 
     <Chronometer
         android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnPause"
-        android:drawableLeft="@mipmap/ic_media_pause"
+        android:drawableLeft="@drawable/ic_media_pause"
         android:text="@string/pause_recording_button"
         android:textAllCaps="true"
         android:fontFamily="sans-serif-condensed"

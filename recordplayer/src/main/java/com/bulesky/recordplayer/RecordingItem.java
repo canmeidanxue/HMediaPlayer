@@ -1,4 +1,4 @@
-package com.bulesky.recordplayer.modle;
+package com.bulesky.recordplayer;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,7 +12,7 @@ public class RecordingItem implements Parcelable {
     private int mId; //id in database
     private int mLength; // length of recording in seconds
     private long mTime; // date/time of the recording
-//    https://github.com/dkim0419/SoundRecorder
+
     public RecordingItem()
     {
     }
@@ -65,7 +65,7 @@ public class RecordingItem implements Parcelable {
         mTime = time;
     }
 
-    public static final Creator<RecordingItem> CREATOR = new Creator<RecordingItem>() {
+    public static final Parcelable.Creator<RecordingItem> CREATOR = new Parcelable.Creator<RecordingItem>() {
         public RecordingItem createFromParcel(Parcel in) {
             return new RecordingItem(in);
         }

@@ -19,11 +19,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bulesky.recordplayer.DBHelper;
 import com.bulesky.recordplayer.R;
+import com.bulesky.recordplayer.RecordingItem;
 import com.bulesky.recordplayer.fragments.PlaybackFragment;
 import com.bulesky.recordplayer.listeners.OnDatabaseChangedListener;
-import com.bulesky.recordplayer.modle.DBHelper;
-import com.bulesky.recordplayer.modle.RecordingItem;
 
 import java.io.File;
 import java.util.ArrayList;

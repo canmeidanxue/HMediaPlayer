@@ -5,22 +5,20 @@ import android.app.Dialog;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bulesky.recordplayer.R;
-import com.bulesky.recordplayer.modle.RecordingItem;
+import com.bulesky.recordplayer.RecordingItem;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +38,7 @@ public class PlaybackFragment extends DialogFragment {
     private MediaPlayer mMediaPlayer = null;
 
     private SeekBar mSeekBar = null;
-    private Button mPlayButton = null;
+    private FloatingActionButton mPlayButton = null;
     private TextView mCurrentProgressTextView = null;
     private TextView mFileNameTextView = null;
     private TextView mFileLengthTextView = null;
@@ -77,7 +75,6 @@ public class PlaybackFragment extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -140,7 +137,7 @@ public class PlaybackFragment extends DialogFragment {
             }
         });
 
-        mPlayButton = (Button) view.findViewById(R.id.fab_play);
+        mPlayButton = (FloatingActionButton) view.findViewById(R.id.fab_play);
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,7 +207,7 @@ public class PlaybackFragment extends DialogFragment {
     }
 
     private void startPlaying() {
-//        mPlayButton.setImageResource(R.mipmap.ic_media_pause);
+        mPlayButton.setImageResource(R.drawable.ic_media_pause);
         mMediaPlayer = new MediaPlayer();
 
         try {
@@ -268,20 +265,20 @@ public class PlaybackFragment extends DialogFragment {
     }
 
     private void pausePlaying() {
-//        mPlayButton.setImageResource(R.mipmap.ic_media_play);
+        mPlayButton.setImageResource(R.drawable.ic_media_play);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.pause();
     }
 
     private void resumePlaying() {
-//        mPlayButton.setImageResource(R.mipmap.ic_media_pause);
+        mPlayButton.setImageResource(R.drawable.ic_media_pause);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.start();
         updateSeekBar();
     }
 
     private void stopPlaying() {
-//        mPlayButton.setImageResource(R.mipmap.ic_media_play);
+        mPlayButton.setImageResource(R.drawable.ic_media_play);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.stop();
         mMediaPlayer.reset();

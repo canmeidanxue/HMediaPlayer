@@ -20,7 +20,13 @@
    <Button
        android:id="@+id/btnRecord"
        android:layout_width="match_parent"
-       android:text="录音"
+       android:text="视频录制"
+       android:layout_height="wrap_content" />
+   <TextView
+       android:id="@+id/tvShowUrl"
+       android:layout_width="match_parent"
+       android:gravity="center"
+       android:text="url"
        android:layout_height="wrap_content" />
 
 </LinearLayout>
