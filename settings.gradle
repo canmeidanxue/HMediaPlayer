@@ -1,1 +1,1 @@
-include ':app', ':hmediaplayer'
+include ':app', ':hmediaplayer', ':recordplayer'

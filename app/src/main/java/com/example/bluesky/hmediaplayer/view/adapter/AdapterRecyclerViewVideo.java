@@ -1,6 +1,5 @@
 package com.example.bluesky.hmediaplayer.view.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,10 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.example.bluesky.hmediaplayer.R;
 import com.example.bluesky.hmediaplayer.VideoPlayer;
 import com.example.bluesky.hmediaplayer.VideoPlayerStandard;
-import com.example.bluesky.hmediaplayer.R;
-import com.example.bluesky.hmediaplayer.modle.VideoConstant;
 import com.example.bluesky.hmediaplayer.modle.VideoInfo;
 import com.squareup.picasso.Picasso;
 

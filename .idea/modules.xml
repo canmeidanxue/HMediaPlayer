@@ -4,8 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/HMediaPlayer.iml" filepath="$PROJECT_DIR$/HMediaPlayer.iml" />
       <module fileurl="file://D:\application\workspace\mediaplayer\HMediaPlayer\.idea\HMediaPlayer.iml" filepath="D:\application\workspace\mediaplayer\HMediaPlayer\.idea\HMediaPlayer.iml" />
+      <module fileurl="file://D:\MyWorkSpace\HMediaPlayer\HMediaPlayer.iml" filepath="D:\MyWorkSpace\HMediaPlayer\HMediaPlayer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hmediaplayer/hmediaplayer.iml" filepath="$PROJECT_DIR$/hmediaplayer/hmediaplayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recordplayer/recordplayer.iml" filepath="$PROJECT_DIR$/recordplayer/recordplayer.iml" />
     </modules>
   </component>
 </project>
