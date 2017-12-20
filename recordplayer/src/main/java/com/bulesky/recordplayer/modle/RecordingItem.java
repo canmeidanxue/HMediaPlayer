@@ -12,7 +12,7 @@ public class RecordingItem implements Parcelable {
     private int mId; //id in database
     private int mLength; // length of recording in seconds
     private long mTime; // date/time of the recording
-
+//    https://github.com/dkim0419/SoundRecorder
     public RecordingItem()
     {
     }
